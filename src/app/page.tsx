@@ -1,16 +1,14 @@
-import { Button } from "~/components/ui/button";
-
 export default async function Home() {
   return (
-    <main className="container mx-auto">
-      <div>
-        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          <span className="text-[hsl(280,100%,70%)]">Secret</span> Santa
+    <main className="container mx-auto max-w-screen-xl">
+      <div className="flex h-[65vh] flex-col justify-center text-center">
+        <h1 className="text-5xl font-extrabold tracking-tight text-[hsl(99,46%,46%)] sm:text-[5rem]">
+          Secret <span className="text-[hsl(355,64%,51%)]">Santa</span>
         </h1>
-        <div>
-          This is the app content
-          <Button>This is a button</Button>
-        </div>
+        <p>
+          One of the most over engineered web apps that only gets used once a
+          year
+        </p>
       </div>
     </main>
   );
