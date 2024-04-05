@@ -1,7 +1,6 @@
 "use client";
 
-import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { GameList } from "./game-list";
 
 import { api } from "~/trpc/react";
 
@@ -11,7 +10,7 @@ export default function Content() {
 
   return (
     <main className="container mx-auto max-w-screen-xl p-4">
-      <DataTable columns={columns} data={data} />
+      <GameList data={data} />
     </main>
   );
 }

@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 
+import { Toaster } from "~/components/ui/sonner";
 import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "~/components/navbar";
 import { getServerAuthSession } from "~/server/auth";
@@ -29,6 +30,7 @@ export default async function RootLayout({
       <body className={`font-sans ${inter.variable}`}>
         <NavBar session={session} />
         <TRPCReactProvider>{children}</TRPCReactProvider>
+        <Toaster richColors closeButton />
       </body>
     </html>
   );
