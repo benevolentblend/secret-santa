@@ -103,6 +103,16 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
             </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
+
+        {!isDesktop && (
+          <>
+            <NavigationMenuItem>
+              <Button variant="outline" onClick={() => signOut()}>
+                Logout
+              </Button>
+            </NavigationMenuItem>
+          </>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );
