@@ -31,7 +31,6 @@ export function GameList({ data }: GameList) {
       toast.error("An error occured when creating the game");
     },
     async onSettled() {
-      console.log("Settling");
       await utils.game.getAll.invalidate();
     },
   });
@@ -73,7 +72,7 @@ export function GameList({ data }: GameList) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {data.map((game) => {
           return (
-            <div className="pb-4 " key={game.id}>
+            <div className="pb-4" key={game.id}>
               <Link href={`/games/${game.id}`}>
                 <div className="rounded-md border p-4 transition-all hover:bg-accent">
                   <div className="flex w-full items-center justify-between">

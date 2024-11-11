@@ -42,6 +42,10 @@ const menu: MenuItem[] = [
     href: "/games",
     content: "Games",
   },
+  {
+    href: "/users",
+    content: "Users",
+  },
 ];
 
 interface NavBarProps {
