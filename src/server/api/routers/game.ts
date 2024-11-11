@@ -26,4 +26,14 @@ export const gameRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
       });
     }),
+
+  get: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.game.findFirst({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 });

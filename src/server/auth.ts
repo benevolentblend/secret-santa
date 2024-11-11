@@ -78,3 +78,9 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = () => getServerSession(authOptions);
+
+export const getSessionRole = async () => {
+  const session = await getServerAuthSession();
+
+  return session?.user.role ?? "USER";
+};

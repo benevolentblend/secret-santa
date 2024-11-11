@@ -1,14 +1,20 @@
-import { getServerAuthSession } from "~/server/auth";
-import Content from "./content";
+import { getSessionRole } from "~/server/auth";
 
-import { redirect } from "next/navigation";
+import Permission from "~/components/user/permission";
+import CreateGameButton from "~/components/game/create-button";
+import { GameList } from "./game-list";
 
 export default async function Page() {
-  const session = await getServerAuthSession();
+  const role = await getSessionRole();
 
-  if (!session?.user) {
-    redirect("/");
-  }
-
-  return <Content />;
+  return (
+    <main className="container mx-auto max-w-screen-xl p-4">
+      <div className="py-4">
+        <Permission role={role} allowedRoles={["ADMIN"]}>
+          <CreateGameButton />
+        </Permission>
+      </div>
+      <GameList />
+    </main>
+  );
 }

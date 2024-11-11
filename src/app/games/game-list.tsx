@@ -1,76 +1,21 @@
 "use client";
 
 import TimeAgo from "react-timeago";
-import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-
-import { GameForm, type Values } from "./form";
-import { api } from "~/trpc/react";
-import { useState } from "react";
-import { toast } from "sonner";
 import { type Game } from "@prisma/client";
 import Link from "next/link";
 
+import { api } from "~/trpc/react";
 interface GameList {
-  data: Game[];
+  games: Game[];
 }
 
-export function GameList({ data }: GameList) {
-  const currentYear = new Date().getFullYear();
-
-  const utils = api.useUtils();
-  const createGame = api.game.create.useMutation({
-    async onError() {
-      toast.error("An error occured when creating the game");
-    },
-    async onSettled() {
-      await utils.game.getAll.invalidate();
-    },
-  });
-
-  const onSubmit = (values: Values) => {
-    createGame.mutate(values);
-
-    setCreateGameDialogOpen(false);
-  };
-
-  const [createGameDialogOpen, setCreateGameDialogOpen] = useState(false);
-
+export function GameList() {
+  const allGamesRequest = api.game.getAll.useQuery({});
+  const games = allGamesRequest.data ?? [];
   return (
     <>
-      <div className="py-4">
-        <Dialog open={createGameDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              onClick={() => setCreateGameDialogOpen(true)}
-            >
-              Create Game
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create Game</DialogTitle>
-              <DialogDescription>
-                Create a new Secret Santa Game.
-              </DialogDescription>
-            </DialogHeader>
-            <GameForm
-              onSubmit={onSubmit}
-              initialName={`Christmas ${currentYear}`}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {data.map((game) => {
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {games.map((game) => {
           return (
             <div className="pb-4" key={game.id}>
               <Link href={`/games/${game.id}`}>
