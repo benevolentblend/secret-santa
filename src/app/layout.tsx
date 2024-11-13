@@ -6,6 +6,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "~/components/navbar";
 import { getServerAuthSession } from "~/server/auth";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Secret Santa",
@@ -22,6 +23,7 @@ export default async function RootLayout({
       <body>
         <NavBar session={session} />
         <TRPCReactProvider>{children}</TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   );

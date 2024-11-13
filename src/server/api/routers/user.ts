@@ -18,9 +18,11 @@ export type UserWithGroup = Prisma.UserGetPayload<{
   };
 }>;
 
+const ids = z.string().array();
+
 export const userRouter = createTRPCRouter({
-  updateGroups: adminProcedure
-    .input(z.object({ ids: z.string().array(), groupId: z.string() }))
+  assignToGroup: adminProcedure
+    .input(z.object({ ids, groupId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const groupCount = await ctx.db.group.count({
         where: {
@@ -39,7 +41,7 @@ export const userRouter = createTRPCRouter({
       if (groupCount < 1) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Group does not Exist",
+          message: "Group does not exist",
         });
       }
 
@@ -56,6 +58,40 @@ export const userRouter = createTRPCRouter({
         },
         data: {
           groupId: input.groupId,
+        },
+      });
+    }),
+
+  assignToNewGroup: adminProcedure
+    .input(z.object({ ids, newGroupName: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const userCount = await ctx.db.user.count({
+        where: {
+          id: {
+            in: input.ids,
+          },
+        },
+      });
+
+      if (userCount !== input.ids.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to find users to update.",
+        });
+      }
+
+      const newGroup = await ctx.db.group.create({
+        data: {
+          name: input.newGroupName,
+        },
+      });
+
+      return ctx.db.user.updateMany({
+        where: {
+          id: { in: input.ids },
+        },
+        data: {
+          groupId: newGroup.id,
         },
       });
     }),

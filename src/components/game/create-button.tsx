@@ -37,7 +37,7 @@ const CreateGameButton: React.FC = () => {
   };
 
   return (
-    <Dialog open={createGameDialogOpen}>
+    <Dialog open={createGameDialogOpen} onOpenChange={setCreateGameDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" onClick={() => setCreateGameDialogOpen(true)}>
           Create Game
