@@ -17,18 +17,30 @@ import {
 } from "~/components/ui/table";
 import { DataTableAction, type TableAction } from "./data-table-action";
 import { type UserRole } from "@prisma/client";
+import { Skeleton } from "./skeleton";
 
 interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   actions?: TableAction<TData>[];
   role: UserRole;
+  isLoading?: boolean;
   data: TData[];
 }
+
+const SkeletonRow = () => (
+  <div className="flex gap-8">
+    <Skeleton className="h-[24px] w-[80px]" />
+    <Skeleton className="h-[24px] w-[200px] flex-auto" />
+    <Skeleton className="h-[24px] w-[300px]" />
+    <Skeleton className="h-[24px] w-[200px] flex-auto" />
+  </div>
+);
 
 export function DataTable<TData extends { id: string }, TValue>({
   columns,
   data,
   role,
+  isLoading,
   actions,
 }: DataTableProps<TData, TValue>) {
   const userActions =
@@ -73,7 +85,18 @@ export function DataTable<TData extends { id: string }, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length}>
+                  <div className="flex flex-col gap-6">
+                    <SkeletonRow />
+                    <SkeletonRow />
+                    <SkeletonRow />
+                    <SkeletonRow />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
