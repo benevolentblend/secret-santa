@@ -1,9 +1,9 @@
 "use client";
 
 import { type ColumnDef } from "@tanstack/react-table";
+import { type UserWithGroup } from "~/app/users/table";
 
 import { Checkbox } from "~/components/ui/checkbox";
-import { type UserWithGroup } from "~/server/api/routers/user";
 
 export const columns: ColumnDef<UserWithGroup>[] = [
   {
