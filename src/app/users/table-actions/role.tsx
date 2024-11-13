@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import { type UserWithGroup } from "~/server/api/routers/user";
+import { type UserWithGroup } from "../table";
 
 const roleAction: TableAction<UserWithGroup> = {
   label: "Role",

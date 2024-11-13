@@ -1,4 +1,3 @@
-import { type Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -7,16 +6,6 @@ import {
   adminProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-
-export type UserWithGroup = Prisma.UserGetPayload<{
-  include: {
-    group: {
-      select: {
-        name: true;
-      };
-    };
-  };
-}>;
 
 const ids = z.string().array();
 

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { type TableAction } from "~/components/ui/data-table-action";
-import { type UserWithGroup } from "~/server/api/routers/user";
 import { toast } from "sonner";
 import {
   DialogDescription,
@@ -21,6 +20,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { type UserWithGroup } from "../table";
 
 const groupAction: TableAction<UserWithGroup> = {
   label: "Group",
