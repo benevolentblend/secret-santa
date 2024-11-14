@@ -1,9 +1,9 @@
 import UserTable from "~/app/users/table";
 
-import { getSessionRole } from "~/server/auth";
+import { getRole } from "~/server/auth";
 
 export default async function Page() {
-  const role = await getSessionRole();
+  const role = await getRole();
 
   return (
     <div className="container mx-auto py-10">
