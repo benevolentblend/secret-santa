@@ -1,9 +1,14 @@
+import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getRole } from "~/server/auth";
 import { api } from "~/trpc/server";
 
 const UrlSchema = z.object({ id: z.coerce.number().int() });
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const role = await getRole();
+
+  if (!role) redirect("/api/auth/signin");
   const safeParams = await UrlSchema.safeParseAsync(params);
 
   if (safeParams.error) {

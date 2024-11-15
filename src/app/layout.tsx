@@ -5,7 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import NavBar from "~/components/navbar";
-import { getServerAuthSession } from "~/server/auth";
+import { auth } from "~/server/auth";
 import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await getServerAuthSession();
+  const session = await auth();
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
