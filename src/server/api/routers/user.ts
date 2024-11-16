@@ -1,3 +1,4 @@
+import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -47,6 +48,34 @@ export const userRouter = createTRPCRouter({
         },
         data: {
           groupId: input.groupId,
+        },
+      });
+    }),
+
+  updateRole: adminProcedure
+    .input(z.object({ ids, role: z.nativeEnum(UserRole) }))
+    .mutation(async ({ ctx, input }) => {
+      const userCount = await ctx.db.user.count({
+        where: {
+          id: {
+            in: input.ids,
+          },
+        },
+      });
+
+      if (userCount !== input.ids.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to find users to update.",
+        });
+      }
+
+      return ctx.db.user.updateMany({
+        where: {
+          id: { in: input.ids },
+        },
+        data: {
+          role: input.role,
         },
       });
     }),

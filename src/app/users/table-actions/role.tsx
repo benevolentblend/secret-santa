@@ -8,6 +8,7 @@ import {
   SelectContent,
   SelectItem,
 } from "~/components/ui/select";
+import { api } from "~/trpc/react";
 import { useState } from "react";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
@@ -24,17 +25,26 @@ const roleAction: TableAction<UserWithGroup> = {
   label: "Role",
   allowedRoles: ["ADMIN"],
   Content: (rows, close) => {
-    const [role, setRole] = useState<"" | UserRole>("");
-    const roleSchema = z.enum([
-      "",
-      UserRole.ADMIN,
-      UserRole.MODERATOR,
-      UserRole.USER,
-    ]);
+    const [role, setRole] = useState<UserRole>("USER");
+    const utils = api.useUtils();
+    const updateRole = api.user.updateRole.useMutation({
+      onSuccess() {
+        close();
+      },
+      async onSettled() {
+        await utils.user.getAll.invalidate();
+      },
+    });
+    const roleSchema = z.nativeEnum(UserRole);
 
     function save() {
-      console.log({ role, rows });
-      close();
+      const ids = rows.map((row) => row.id);
+
+      if (!role) {
+        return;
+      }
+
+      updateRole.mutate({ ids, role });
     }
 
     return (
@@ -66,9 +76,7 @@ const roleAction: TableAction<UserWithGroup> = {
           </Select>
         </div>
         <DialogFooter>
-          <Button disabled={role === ""} onClick={save}>
-            Save
-          </Button>
+          <Button onClick={save}>Save</Button>
         </DialogFooter>
       </>
     );

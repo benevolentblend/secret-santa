@@ -39,9 +39,7 @@ const groupAction: TableAction<UserWithGroup> = {
         toast.error("Unable to update groups");
       },
       async onSettled() {
-        console.log("Called");
         await utils.user.getAll.invalidate();
-        console.log("Called after await");
       },
     };
 
