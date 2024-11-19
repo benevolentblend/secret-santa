@@ -24,7 +24,7 @@ import { type UserWithGroup } from "../table";
 
 const groupAction: TableAction<UserWithGroup> = {
   label: "Group",
-  allowedRoles: ["ADMIN"],
+  allowedRoles: ["Admin"],
   Content: (rows, close) => {
     const [groupId, setGroupId] = useState("");
     const [newGroupName, setNewGroupName] = useState("");
