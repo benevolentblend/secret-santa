@@ -23,9 +23,9 @@ import { type UserWithGroup } from "../table";
 
 const roleAction: TableAction<UserWithGroup> = {
   label: "Role",
-  allowedRoles: ["ADMIN"],
+  allowedRoles: ["Admin"],
   Content: (rows, close) => {
-    const [role, setRole] = useState<UserRole>("USER");
+    const [role, setRole] = useState<UserRole>("Admin");
     const utils = api.useUtils();
     const updateRole = api.user.updateRole.useMutation({
       onSuccess() {
@@ -69,9 +69,9 @@ const roleAction: TableAction<UserWithGroup> = {
               <SelectValue placeholder="Select a role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
-              <SelectItem value={UserRole.MODERATOR}>Moderator</SelectItem>
-              <SelectItem value={UserRole.USER}>User</SelectItem>
+              <SelectItem value={UserRole.Admin}>Admin</SelectItem>
+              <SelectItem value={UserRole.Moderator}>Moderator</SelectItem>
+              <SelectItem value={UserRole.User}>User</SelectItem>
             </SelectContent>
           </Select>
         </div>

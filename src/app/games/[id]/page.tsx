@@ -28,7 +28,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     <>
       <h1 className="text-2xl">{game.name}</h1>
       <h3 className="text-xl">{game.status}</h3>
-      <Permission role={role} allowedRoles={["ADMIN"]}>
+      <Permission role={role} allowedRoles={["Admin"]}>
         <AddUsersButton id={game.id} />
       </Permission>
       <MatchTable id={game.id} role={role} />

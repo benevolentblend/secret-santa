@@ -23,6 +23,14 @@ export const gameRouter = createTRPCRouter({
       return ctx.db.game.findMany({
         take: input.take,
         orderBy: { createdAt: "desc" },
+        include: {
+          GameMatches: {
+            include: {
+              patron: true,
+              recipient: true,
+            },
+          },
+        },
       });
     }),
 
