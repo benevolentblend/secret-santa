@@ -7,6 +7,7 @@ import AddUsersButton from "~/components/game/add-users";
 import Permission from "~/components/user/permission";
 
 const UrlSchema = z.object({ id: z.coerce.number().int() });
+
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const role = await getRole();
 
