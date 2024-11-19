@@ -18,7 +18,7 @@ import { cn } from "~/lib/utils";
 import { type ClassValue } from "clsx";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import Avatar from "~/components/user/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -120,11 +120,6 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
       </NavigationMenuList>
     </NavigationMenu>
   );
-  const profileName = (session.user.name ?? "Player").split(" ");
-  const profileInitials =
-    profileName.length > 1
-      ? `${profileName[0]?.charAt(0)}${profileName[1]?.charAt(0)}`
-      : profileName[0]?.charAt(0);
 
   return (
     <BaseNavBar wrapperStyle="justify-between">
@@ -146,13 +141,7 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
           {Menu}
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Avatar>
-                <AvatarImage
-                  src={session.user.image ?? undefined}
-                  alt={session.user.name ?? ""}
-                />
-                <AvatarFallback>{profileInitials}</AvatarFallback>
-              </Avatar>
+              <Avatar user={session.user} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
