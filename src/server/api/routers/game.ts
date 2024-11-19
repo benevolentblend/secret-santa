@@ -1,3 +1,5 @@
+import { type GameStatus } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -5,6 +7,7 @@ import {
   adminProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { getPromoteGameStatus, getDemoteGameStatus } from "~/server/db";
 
 export const gameRouter = createTRPCRouter({
   create: adminProcedure
@@ -72,6 +75,68 @@ export const gameRouter = createTRPCRouter({
         include: {
           recipient: true,
           patron: true,
+        },
+      });
+    }),
+
+  promote: adminProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const game = await ctx.db.game.findFirst({ where: { id: input.id } });
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to promote game.",
+        });
+      }
+
+      if (game.status == "Complete") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot promote completed game.",
+        });
+      }
+
+      const newStatus: GameStatus = getPromoteGameStatus(game.status);
+
+      return ctx.db.game.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          status: newStatus,
+        },
+      });
+    }),
+
+  demote: adminProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const game = await ctx.db.game.findFirst({ where: { id: input.id } });
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to demote game.",
+        });
+      }
+
+      if (game.status == "Setup") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot demote setup game.",
+        });
+      }
+
+      const newStatus: GameStatus = getDemoteGameStatus(game.status);
+
+      return ctx.db.game.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          status: newStatus,
         },
       });
     }),
