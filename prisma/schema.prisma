@@ -16,6 +16,7 @@ datasource db {
 
 enum GameStatus {
     Setup
+    Sorting
     Active
     Complete
 }

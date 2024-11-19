@@ -4,7 +4,7 @@ import { type Prisma, type UserRole } from "@prisma/client";
 
 import { api } from "~/trpc/react";
 import { DataTable } from "~/components/ui/data-table";
-import { columns } from "./table-columns";
+import { type ColumnDef } from "@tanstack/react-table";
 
 export type GameMatchWithUsers = Prisma.GameMatchGetPayload<{
   include: {
@@ -16,9 +16,10 @@ export type GameMatchWithUsers = Prisma.GameMatchGetPayload<{
 interface UserTableProps {
   role: UserRole;
   id: number;
+  columns: ColumnDef<GameMatchWithUsers>[];
 }
 
-const MatchTable: React.FC<UserTableProps> = ({ role, id }) => {
+const MatchTable: React.FC<UserTableProps> = ({ role, id, columns }) => {
   // const getMatches = api.game.getMatches.useQuery({ id });
   const getMatches = api.game.getMatches.useQuery({ id });
   const matches = getMatches.data ?? [];

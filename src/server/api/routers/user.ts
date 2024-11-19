@@ -55,7 +55,7 @@ export const userRouter = createTRPCRouter({
   assignToGame: adminProcedure
     .input(z.object({ ids, gameId: z.number().int() }))
     .mutation(async ({ ctx, input }) => {
-      const gameCount = await ctx.db.game.count({
+      const game = await ctx.db.game.findFirst({
         where: {
           id: input.gameId,
         },
@@ -69,17 +69,25 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      if (gameCount < 1) {
+      if (!game) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Game does not exist",
         });
       }
 
+      if (game.status !== "Setup") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Unable to assign users to a sorting, active or completed game.",
+        });
+      }
+
       if (userCount !== input.ids.length) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Unable to find users to update.",
+          message: "Unable to find users to add.",
         });
       }
 
@@ -90,6 +98,55 @@ export const userRouter = createTRPCRouter({
 
       return ctx.db.gameMatch.createMany({
         data: matches,
+      });
+    }),
+
+  removeFromGame: adminProcedure
+    .input(z.object({ ids, gameId: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const game = await ctx.db.game.findFirst({
+        where: {
+          id: input.gameId,
+        },
+      });
+
+      const matches = await ctx.db.gameMatch.findMany({
+        where: {
+          recipientId: {
+            in: input.ids,
+          },
+          gameId: input.gameId,
+        },
+      });
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Game does not exist",
+        });
+      }
+
+      if (game.status !== "Setup") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Unable to remove users from a sorting, active or completed game.",
+        });
+      }
+
+      if (matches.length !== input.ids.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to find users to remove.",
+        });
+      }
+
+      return ctx.db.gameMatch.deleteMany({
+        where: {
+          id: {
+            in: matches.map((match) => match.id),
+          },
+        },
       });
     }),
 
