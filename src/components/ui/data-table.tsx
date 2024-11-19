@@ -19,7 +19,7 @@ import { DataTableAction, type TableAction } from "./data-table-action";
 import { type UserRole } from "@prisma/client";
 import { Skeleton } from "./skeleton";
 
-interface DataTableProps<TData extends { id: string }, TValue> {
+interface DataTableProps<TData extends { id: string | number }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   actions?: TableAction<TData>[];
   role: UserRole;
@@ -36,7 +36,7 @@ const SkeletonRow = () => (
   </div>
 );
 
-export function DataTable<TData extends { id: string }, TValue>({
+export function DataTable<TData extends { id: string | number }, TValue>({
   columns,
   data,
   role,
@@ -50,7 +50,7 @@ export function DataTable<TData extends { id: string }, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (originalRow) => originalRow.id,
+    getRowId: (originalRow) => `${originalRow.id}`,
   });
 
   const rows = table.getFilteredSelectedRowModel().rows;

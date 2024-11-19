@@ -32,7 +32,6 @@ const CreateGameButton: React.FC = () => {
 
   const onSubmit = (values: Values) => {
     createGame.mutate(values);
-
     setCreateGameDialogOpen(false);
   };
 

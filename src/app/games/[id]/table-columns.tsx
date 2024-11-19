@@ -3,9 +3,9 @@
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { Checkbox } from "~/components/ui/checkbox";
-import { type UserWithGroup } from "./table";
+import { type GameMatchWithUsers } from "./match-table";
 
-export const columns: ColumnDef<UserWithGroup>[] = [
+export const columns: ColumnDef<GameMatchWithUsers>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -31,19 +31,11 @@ export const columns: ColumnDef<UserWithGroup>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "recipient.name",
+    header: "Recipient",
   },
   {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "group.name",
-    header: "Group",
-  },
-  {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "patron.name",
+    header: "Santa",
   },
 ];

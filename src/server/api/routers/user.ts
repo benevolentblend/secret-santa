@@ -52,6 +52,47 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  assignToGame: adminProcedure
+    .input(z.object({ ids, gameId: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const gameCount = await ctx.db.game.count({
+        where: {
+          id: input.gameId,
+        },
+      });
+
+      const userCount = await ctx.db.user.count({
+        where: {
+          id: {
+            in: input.ids,
+          },
+        },
+      });
+
+      if (gameCount < 1) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Game does not exist",
+        });
+      }
+
+      if (userCount !== input.ids.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to find users to update.",
+        });
+      }
+
+      const matches = input.ids.map((id) => ({
+        gameId: input.gameId,
+        recipientId: id,
+      }));
+
+      return ctx.db.gameMatch.createMany({
+        data: matches,
+      });
+    }),
+
   updateRole: adminProcedure
     .input(z.object({ ids, role: z.nativeEnum(UserRole) }))
     .mutation(async ({ ctx, input }) => {
