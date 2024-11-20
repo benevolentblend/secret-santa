@@ -36,12 +36,12 @@ model GameMatch {
     updatedAt DateTime @updatedAt
 
     game      Game  @relation(references: [id], fields: [gameId])
-    patron    User? @relation("patron", fields: [patronId], references: [id])
-    recipient User  @relation("recipient", fields: [recipientId], references: [id])
+    patron    User  @relation("patron", fields: [patronId], references: [id])
+    recipient User? @relation("recipient", fields: [recipientId], references: [id])
 
     gameId      Int
-    patronId    String?
-    recipientId String
+    patronId    String
+    recipientId String?
 
     @@unique([gameId, patronId])
     @@unique([gameId, recipientId])

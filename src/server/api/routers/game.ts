@@ -48,7 +48,7 @@ export const gameRouter = createTRPCRouter({
       return ctx.db.user.findMany({
         take: input.take,
         where: {
-          recipientGames: {
+          patronGames: {
             none: {},
           },
         },
