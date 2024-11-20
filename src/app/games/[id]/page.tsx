@@ -30,7 +30,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   const columns: ColumnDef<GameMatchWithUsers>[] = [
     {
-      accessorKey: "recipient.name",
+      accessorKey: "patron.name",
       header: "Recipient",
     },
   ];

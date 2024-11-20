@@ -26,7 +26,7 @@ const RemoveUsersButton: React.FC<RemoveUserButtonProps> = ({ id }) => {
   const utils = api.useUtils();
   const addUsersToGame = api.user.removeFromGame.useMutation({
     async onError() {
-      toast.error("An error occured when adding users to the game");
+      toast.error("An error occured when removing users from the game");
     },
     async onSettled() {
       await utils.game.GetAvailableUsers.invalidate();
@@ -37,8 +37,8 @@ const RemoveUsersButton: React.FC<RemoveUserButtonProps> = ({ id }) => {
   const getAvailableUsers = api.game.getMatches.useQuery({ id });
   const availableUsers = getAvailableUsers.data ?? [];
   const options = availableUsers.map((user) => ({
-    value: user.recipientId,
-    label: user.recipient.name ?? "Unknown",
+    value: user.patronId,
+    label: user.patron.name ?? "Unknown",
   }));
 
   function save() {
