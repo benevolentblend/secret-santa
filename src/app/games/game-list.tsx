@@ -19,7 +19,7 @@ export function GameList() {
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {games.map((game) => {
-          const users = game.GameMatches.map((game) => game.recipient);
+          const users = game.GameMatches.map((game) => game.patron);
           return (
             <div className="pb-4" key={game.id}>
               <Link href={`/games/${game.id}`}>

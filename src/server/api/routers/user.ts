@@ -93,7 +93,7 @@ export const userRouter = createTRPCRouter({
 
       const matches = input.ids.map((id) => ({
         gameId: input.gameId,
-        recipientId: id,
+        patronId: id,
       }));
 
       return ctx.db.gameMatch.createMany({
@@ -112,7 +112,7 @@ export const userRouter = createTRPCRouter({
 
       const matches = await ctx.db.gameMatch.findMany({
         where: {
-          recipientId: {
+          patronId: {
             in: input.ids,
           },
           gameId: input.gameId,
