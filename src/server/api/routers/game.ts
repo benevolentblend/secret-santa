@@ -49,7 +49,9 @@ export const gameRouter = createTRPCRouter({
         take: input.take,
         where: {
           patronGames: {
-            none: {},
+            none: {
+              gameId: input.id,
+            },
           },
         },
       });
