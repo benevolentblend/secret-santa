@@ -29,7 +29,7 @@ const RemoveUsersButton: React.FC<RemoveUserButtonProps> = ({ id }) => {
       toast.error("An error occured when removing users from the game");
     },
     async onSettled() {
-      await utils.game.GetAvailableUsers.invalidate();
+      await utils.game.getAvailableUsers.invalidate();
       await utils.game.getMatches.invalidate();
     },
   });

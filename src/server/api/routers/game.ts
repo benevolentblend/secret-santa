@@ -1,4 +1,4 @@
-import { type GameStatus } from "@prisma/client";
+import { Prisma, type GameStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -37,7 +37,7 @@ export const gameRouter = createTRPCRouter({
       });
     }),
 
-  GetAvailableUsers: protectedProcedure
+  getAvailableUsers: protectedProcedure
     .input(
       z.object({
         take: z.number().int().default(10),
@@ -70,13 +70,27 @@ export const gameRouter = createTRPCRouter({
   getMatches: protectedProcedure
     .input(z.object({ id: z.number().int() }))
     .query(({ ctx, input }) => {
+      const userWithGroup = {
+        include: {
+          group: {
+            include: {
+              users: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      };
+
       return ctx.db.gameMatch.findMany({
         where: {
           gameId: input.id,
         },
         include: {
-          recipient: true,
-          patron: true,
+          recipient: userWithGroup,
+          patron: userWithGroup,
         },
       });
     }),
@@ -110,6 +124,93 @@ export const gameRouter = createTRPCRouter({
           status: newStatus,
         },
       });
+    }),
+
+  assignRecipients: adminProcedure
+    .input(
+      z.object({
+        matches: z
+          .object({
+            recipientId: z.string().nullish(),
+            patronId: z.string(),
+          })
+          .array(),
+        gameId: z.number().int(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const gameMatchKeys = input.matches.map(({ patronId }) => ({
+        gameId: input.gameId,
+        patronId,
+      }));
+
+      const game = await ctx.db.game.findFirst({
+        where: {
+          id: input.gameId,
+        },
+      });
+
+      const filteredMatches = input.matches.map(
+        ({ recipientId, patronId }) => ({ recipientId, patronId }),
+      );
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Game does not exist.",
+        });
+      }
+
+      if (game.status !== "Sorting") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Unable to assign secipients in a setup, active, or completed game.",
+        });
+      }
+
+      const gameMatches = await ctx.db.gameMatch.findMany({
+        where: {
+          OR: gameMatchKeys,
+        },
+      });
+
+      if (gameMatches.length !== input.matches.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Game matches do not exist",
+        });
+      }
+
+      const gameMatchesIds = gameMatches.map((match) => match.id);
+      const newGameMatches = filteredMatches.map((gameMatch) => ({
+        ...gameMatch,
+        gameId: input.gameId,
+      }));
+
+      try {
+        await ctx.db.$transaction(
+          [
+            ctx.db.gameMatch.deleteMany({
+              where: { id: { in: gameMatchesIds } },
+            }),
+            ctx.db.gameMatch.createMany({
+              data: newGameMatches,
+            }),
+          ],
+          {
+            isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+          },
+        );
+
+        return gameMatches.length;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "There was a problem assigning the recipients. ",
+        });
+      }
     }),
 
   demote: adminProcedure

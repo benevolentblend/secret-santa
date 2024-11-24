@@ -2,18 +2,22 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getRole } from "~/server/auth";
 import { api } from "~/trpc/server";
-import MatchTable, { type GameMatchWithUsers } from "./match-table";
 import AddUsersButton from "~/components/game/add-users";
 import Permission from "~/components/user/permission";
 import RemoveUsersButton from "~/components/game/add-remove";
-import { type ColumnDef } from "@tanstack/react-table";
 import PromoteButton from "./promote-button";
 import DemoteButton from "./demote-button";
+import PatronColumn from "./table-columns/patron";
+import MatchTable from "./match-table";
+import RecipientColumn from "./table-columns/recipient";
+import SelectRecipients from "./select-recipients";
 
 const UrlSchema = z.object({ id: z.coerce.number().int() });
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const role = await getRole();
+
+  const columns = [PatronColumn];
 
   if (!role) redirect("/api/auth/signin");
   const safeParams = UrlSchema.safeParse(await params);
@@ -28,12 +32,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     return <div>Game not found</div>;
   }
 
-  const columns: ColumnDef<GameMatchWithUsers>[] = [
-    {
-      accessorKey: "patron.name",
-      header: "Recipient",
-    },
-  ];
+  if (game.status === "Sorting") {
+    columns.push(RecipientColumn);
+  }
 
   return (
     <>
@@ -47,8 +48,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
           {game.status !== "Setup" && <DemoteButton game={game} />}
         </div>
       </Permission>
+      <div className="pb-4">
+        <MatchTable id={game.id} role={role} columns={columns} />
+      </div>
 
-      <MatchTable id={game.id} role={role} columns={columns} />
+      {game.status === "Sorting" && <SelectRecipients gameId={game.id} />}
     </>
   );
 };
