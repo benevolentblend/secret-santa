@@ -29,12 +29,12 @@ const AddUsersButton: React.FC<AddUserButtonProps> = ({ id }) => {
       toast.error("An error occured when adding users to the game");
     },
     async onSettled() {
-      await utils.game.GetAvailableUsers.invalidate();
+      await utils.game.getAvailableUsers.invalidate();
       await utils.game.getMatches.invalidate();
     },
   });
 
-  const getAvailableUsers = api.game.GetAvailableUsers.useQuery({ id });
+  const getAvailableUsers = api.game.getAvailableUsers.useQuery({ id });
   const availableUsers = getAvailableUsers.data ?? [];
   const options = availableUsers.map((user) => ({
     value: user.id,

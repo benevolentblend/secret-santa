@@ -4,6 +4,8 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -18,12 +20,14 @@ import {
 import { DataTableAction, type TableAction } from "./data-table-action";
 import { type UserRole } from "@prisma/client";
 import { Skeleton } from "./skeleton";
+import { useState } from "react";
 
 interface DataTableProps<TData extends { id: string | number }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   actions?: TableAction<TData>[];
   role: UserRole;
   isLoading?: boolean;
+  initialSorting?: SortingState;
   data: TData[];
 }
 
@@ -42,14 +46,22 @@ export function DataTable<TData extends { id: string | number }, TValue>({
   role,
   isLoading,
   actions,
+  initialSorting,
 }: DataTableProps<TData, TValue>) {
   const userActions =
     actions?.filter((action) => action.allowedRoles.includes(role)) ?? [];
+
+  const [sorting, setSorting] = useState<SortingState>(initialSorting ?? []);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
     getRowId: (originalRow) => `${originalRow.id}`,
   });
 
