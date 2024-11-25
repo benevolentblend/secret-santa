@@ -35,7 +35,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { UserRole } from "@prisma/client";
-import { getRole } from "~/server/auth";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type MenuItem = {
@@ -165,7 +164,7 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
       </Link>
 
       {isDesktop ? (
-        <>
+        <div className="flex gap-8">
           {Menu}
           <DropdownMenu>
             <DropdownMenuTrigger>
@@ -182,7 +181,7 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </>
+        </div>
       ) : (
         <Sheet>
           <SheetTrigger>

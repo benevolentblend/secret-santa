@@ -1,4 +1,4 @@
-import { Prisma, type User } from "@prisma/client";
+import type { Prisma, User } from "@prisma/client";
 import { useEffect, useMemo, useReducer } from "react";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
