@@ -29,7 +29,13 @@ const UserTable: React.FC<UserTableProps> = ({ role }) => {
   const actions = [roleAction, groupAction];
 
   return (
-    <DataTable role={role} columns={columns} data={users} actions={actions} />
+    <DataTable
+      isLoading={getAllUsers.isLoading}
+      role={role}
+      columns={columns}
+      data={users}
+      actions={actions}
+    />
   );
 };
 

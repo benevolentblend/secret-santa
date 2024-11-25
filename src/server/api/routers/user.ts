@@ -226,4 +226,18 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  get: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.user.findFirst({
+        where: {
+          id: input.id,
+        },
+        include: {
+          patronGames: true,
+          group: true,
+        },
+      });
+    }),
 });

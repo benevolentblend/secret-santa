@@ -11,13 +11,13 @@ export default async function Page() {
   if (!role) redirect("/api/auth/signin");
 
   return (
-    <main className="container mx-auto max-w-screen-xl p-4">
+    <>
       <div className="py-4">
         <Permission role={role} allowedRoles={["Admin"]}>
           <CreateGameButton />
         </Permission>
       </div>
       <GameList />
-    </main>
+    </>
   );
 }

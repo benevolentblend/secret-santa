@@ -9,9 +9,5 @@ export default async function Page() {
 
   if (!["Moderator", "Admin"].includes(role)) redirect("/");
 
-  return (
-    <div className="container mx-auto py-10">
-      <UserTable role={role} />
-    </div>
-  );
+  return <UserTable role={role} />;
 }
