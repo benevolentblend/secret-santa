@@ -4,6 +4,7 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 
 import {
   NavigationMenu,
+  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
@@ -11,7 +12,13 @@ import {
 } from "./ui/navigation-menu";
 import { useMediaQuery } from "~/hooks/use-media-query";
 import { type ReactNode } from "react";
-import { Sheet, SheetTrigger, SheetContent } from "./ui/sheet";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "./ui/sheet";
 import { type Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import { cn } from "~/lib/utils";
@@ -27,10 +34,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { UserRole } from "@prisma/client";
+import { getRole } from "~/server/auth";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type MenuItem = {
   href: string;
   content: ReactNode;
+  requiredPermission?: UserRole[];
 };
 
 const menu: MenuItem[] = [
@@ -45,6 +56,7 @@ const menu: MenuItem[] = [
   {
     href: "/users",
     content: "Users",
+    requiredPermission: ["Admin", "Moderator"],
   },
 ];
 
@@ -89,29 +101,45 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
     );
   }
 
+  const role = session.user.role;
+
   const Menu = (
     <NavigationMenu orientation={isDesktop ? "horizontal" : "vertical"}>
       <NavigationMenuList
         className={isDesktop ? "" : "flex-col items-start space-x-0"}
       >
-        {menu.map(({ href, content }) => (
-          <NavigationMenuItem key={href}>
-            <NavigationMenuLink
-              href={href}
-              className={cn(
-                navigationMenuTriggerStyle(),
-                isDesktop ? "" : "w-max",
-              )}
-            >
-              {content}
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-        ))}
+        {menu
+          .filter(
+            ({ requiredPermission }) =>
+              requiredPermission === undefined ||
+              requiredPermission.includes(role),
+          )
+          .map(({ href, content }) => (
+            <NavigationMenuItem key={href}>
+              <NavigationMenuLink
+                href={href}
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  isDesktop ? "" : "w-max",
+                )}
+              >
+                {content}
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          ))}
 
         {!isDesktop && (
           <>
             <NavigationMenuItem>
-              <Button variant="outline" onClick={() => signOut()}>
+              <NavigationMenuLink
+                className={cn(navigationMenuTriggerStyle(), "w-max")}
+                href="/profile"
+              >
+                Profile
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Button variant="ghost" onClick={() => signOut()}>
                 Logout
               </Button>
             </NavigationMenuItem>
@@ -146,7 +174,9 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/profile">Profile</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => signOut()}>
                 Sign Out
               </DropdownMenuItem>
@@ -159,6 +189,11 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
             <HamburgerMenuIcon />
           </SheetTrigger>
           <SheetContent side="right" className="w-[250px]">
+            <SheetHeader>
+              <VisuallyHidden>
+                <SheetTitle>Menu</SheetTitle>
+              </VisuallyHidden>
+            </SheetHeader>
             {Menu}
           </SheetContent>
         </Sheet>

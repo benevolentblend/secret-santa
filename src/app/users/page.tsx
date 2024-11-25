@@ -7,6 +7,8 @@ export default async function Page() {
 
   if (!role) redirect("/api/auth/signin");
 
+  if (!["Moderator", "Admin"].includes(role)) redirect("/");
+
   return (
     <div className="container mx-auto py-10">
       <UserTable role={role} />

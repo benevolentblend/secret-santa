@@ -23,8 +23,8 @@ export function GameList() {
           return (
             <div className="pb-4" key={game.id}>
               <Link href={`/games/${game.id}`}>
-                <div className="rounded-md border p-4 transition-all hover:bg-accent">
-                  <div className="flex w-full items-center justify-between">
+                <div className="h-[140px] rounded-md border p-4 transition-all hover:bg-accent lg:h-[115px]">
+                  <div className="w-full items-center justify-between lg:flex">
                     <div className="text-xl font-semibold">{game.name}</div>
                     <div className="text-foreground">
                       <TimeAgo date={game.createdAt} />
@@ -32,7 +32,7 @@ export function GameList() {
                   </div>
                   <div className="flex w-full items-center justify-between pt-2">
                     {!users.length && (
-                      <div className="text-neutral-600">No players.</div>
+                      <div className="pt-2 text-neutral-600">No players.</div>
                     )}
                     <div className="flex">
                       {users.slice(0, cutoffLimit).map((user) => (
@@ -53,6 +53,7 @@ export function GameList() {
             </div>
           );
         })}
+        {/* {!games.length && } */}
       </div>
     </>
   );
