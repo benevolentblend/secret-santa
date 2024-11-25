@@ -23,6 +23,19 @@ export const gameRouter = createTRPCRouter({
   getAll: protectedProcedure
     .input(z.object({ take: z.number().int().default(10) }))
     .query(({ ctx, input }) => {
+      const { role, id: userId } = ctx.session.user;
+
+      const limitUsersGames =
+        role === "User"
+          ? {
+              GameMatches: {
+                some: {
+                  patronId: userId,
+                },
+              },
+            }
+          : undefined;
+
       return ctx.db.game.findMany({
         take: input.take,
         orderBy: { createdAt: "desc" },
@@ -34,6 +47,7 @@ export const gameRouter = createTRPCRouter({
             },
           },
         },
+        where: limitUsersGames,
       });
     }),
 
@@ -63,6 +77,14 @@ export const gameRouter = createTRPCRouter({
       return ctx.db.game.findFirst({
         where: {
           id: input.id,
+        },
+        include: {
+          GameMatches: {
+            select: {
+              patronId: true,
+              recipientId: true,
+            },
+          },
         },
       });
     }),
@@ -115,6 +137,37 @@ export const gameRouter = createTRPCRouter({
       }
 
       const newStatus: GameStatus = getPromoteGameStatus(game.status);
+
+      return ctx.db.game.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          status: newStatus,
+        },
+      });
+    }),
+
+  demote: adminProcedure
+    .input(z.object({ id: z.number().int() }))
+    .mutation(async ({ ctx, input }) => {
+      const game = await ctx.db.game.findFirst({ where: { id: input.id } });
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to demote game.",
+        });
+      }
+
+      if (game.status == "Setup") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot demote setup game.",
+        });
+      }
+
+      const newStatus: GameStatus = getDemoteGameStatus(game.status);
 
       return ctx.db.game.update({
         where: {
@@ -213,34 +266,11 @@ export const gameRouter = createTRPCRouter({
       }
     }),
 
-  demote: adminProcedure
-    .input(z.object({ id: z.number().int() }))
-    .mutation(async ({ ctx, input }) => {
-      const game = await ctx.db.game.findFirst({ where: { id: input.id } });
-
-      if (!game) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Unable to demote game.",
-        });
-      }
-
-      if (game.status == "Setup") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Cannot demote setup game.",
-        });
-      }
-
-      const newStatus: GameStatus = getDemoteGameStatus(game.status);
-
-      return ctx.db.game.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          status: newStatus,
-        },
-      });
-    }),
+  // sort: adminProcedure
+  //   .input(
+  //     z.object({
+  //       rounds: z.number().int(),
+  //     }),
+  //   )
+  //   .mutation(async ({ ctx, input }) => {}),
 });
