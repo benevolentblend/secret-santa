@@ -130,7 +130,6 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
         {!isDesktop && (
           <>
             <NavigationMenuItem>
-              <Link href="/profile" legacyBehavior passHref></Link>
               <NavigationMenuLink
                 className={cn(navigationMenuTriggerStyle(), "w-max")}
                 href="/profile"
