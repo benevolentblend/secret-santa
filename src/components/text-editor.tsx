@@ -14,6 +14,14 @@ import {
 import { Toggle } from "~/components/ui/toggle";
 import { Separator } from "~/components/ui/separator";
 import { useCallback } from "react";
+import { Skeleton } from "./ui/skeleton";
+
+const SkeletonEditor = () => (
+  <div className="mt-2 h-[246px] w-full rounded-md border">
+    <Skeleton className="" />
+    <Skeleton className="" />
+  </div>
+);
 
 const RichTextEditor = ({
   value,
@@ -26,7 +34,7 @@ const RichTextEditor = ({
     editorProps: {
       attributes: {
         class:
-          "min-h-[150px] max-h-[150px] w-full rounded-md rounded-t-none border border-input bg-transparent px-3 py-2 border-t-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto",
+          "h-[200px] w-full rounded-md rounded-t-none border border-input bg-transparent px-3 py-2 border-t-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto",
       },
     },
     extensions: [
@@ -122,10 +130,14 @@ const RichTextEditor = ({
   });
 
   return (
-    <>
-      {editor ? <RichTextEditorToolbar editor={editor} /> : null}
+    <div>
+      {!!editor ? (
+        <RichTextEditorToolbar editor={editor} />
+      ) : (
+        <SkeletonEditor />
+      )}
       <EditorContent editor={editor} />
-    </>
+    </div>
   );
 };
 
