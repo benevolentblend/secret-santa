@@ -34,7 +34,7 @@ const RichTextEditor = ({
     editorProps: {
       attributes: {
         class:
-          "h-[200px] w-full rounded-md rounded-t-none border border-input bg-transparent px-3 py-2 border-t-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto",
+          "render-anchors h-[200px] w-full rounded-md rounded-t-none border border-input bg-transparent px-3 py-2 border-t-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto",
       },
     },
     extensions: [
