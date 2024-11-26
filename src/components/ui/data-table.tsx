@@ -65,14 +65,18 @@ export function DataTable<TData extends { id: string | number }, TValue>({
     getRowId: (originalRow) => `${originalRow.id}`,
   });
 
-  const rows = table.getFilteredSelectedRowModel().rows;
+  const rows = table.getRowModel().rows;
+  const selectedRows = table.getFilteredSelectedRowModel().rows;
 
   return (
     <div>
       {!!userActions && (
         <div className="flex gap-2 pb-2">
           {userActions.map((action) => (
-            <DataTableAction key={action.label} {...{ action, rows }} />
+            <DataTableAction
+              key={action.label}
+              {...{ action, rows: selectedRows }}
+            />
           ))}
         </div>
       )}
@@ -108,8 +112,8 @@ export function DataTable<TData extends { id: string | number }, TValue>({
                   </div>
                 </TableCell>
               </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+            ) : rows.length ? (
+              rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}

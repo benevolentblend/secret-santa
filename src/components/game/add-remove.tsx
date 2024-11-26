@@ -17,7 +17,7 @@ import { MultiSelect } from "~/components/ui/multi-select";
 import { toast } from "sonner";
 
 interface RemoveUserButtonProps {
-  id: number;
+  id: string;
 }
 
 const RemoveUsersButton: React.FC<RemoveUserButtonProps> = ({ id }) => {

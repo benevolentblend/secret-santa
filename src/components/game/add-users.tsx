@@ -17,7 +17,7 @@ import { MultiSelect } from "~/components/ui/multi-select";
 import { toast } from "sonner";
 
 interface AddUserButtonProps {
-  id: number;
+  id: string;
 }
 
 const AddUsersButton: React.FC<AddUserButtonProps> = ({ id }) => {

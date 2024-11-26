@@ -33,7 +33,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { UserRole } from "@prisma/client";
+import { type UserRole } from "@prisma/client";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type MenuItem = {

@@ -5,11 +5,11 @@ import type { UserRole } from "@prisma/client";
 import { api } from "~/trpc/react";
 import { DataTable } from "~/components/ui/data-table";
 import type { ColumnDef } from "@tanstack/react-table";
-import { GameMatchWithUsers } from "~/components/game/use-batch-update-recipients";
+import { type GameMatchWithUsers } from "~/components/game/use-batch-update-recipients";
 
 interface UserTableProps {
   role: UserRole;
-  id: number;
+  id: string;
   columns: ColumnDef<GameMatchWithUsers>[];
 }
 

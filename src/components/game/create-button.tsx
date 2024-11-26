@@ -2,7 +2,6 @@
 
 import { api } from "~/trpc/react";
 
-import { GameForm, type Values } from "~/components/game/create-form";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -14,6 +13,25 @@ import {
 } from "../ui/dialog";
 import { toast } from "sonner";
 import { useState } from "react";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Input } from "../ui/input";
+
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+});
 
 const CreateGameButton: React.FC = () => {
   const [createGameDialogOpen, setCreateGameDialogOpen] = useState(false);
@@ -30,10 +48,17 @@ const CreateGameButton: React.FC = () => {
     },
   });
 
-  const onSubmit = (values: Values) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     createGame.mutate(values);
     setCreateGameDialogOpen(false);
   };
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: `Christmas ${currentYear}`,
+    },
+  });
 
   return (
     <Dialog open={createGameDialogOpen} onOpenChange={setCreateGameDialogOpen}>
@@ -47,10 +72,28 @@ const CreateGameButton: React.FC = () => {
           <DialogTitle>Create Game</DialogTitle>
           <DialogDescription>Create a new Secret Santa Game.</DialogDescription>
         </DialogHeader>
-        <GameForm
-          onSubmit={onSubmit}
-          initialName={`Christmas ${currentYear}`}
-        />
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col space-y-8"
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>The name of the Game</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

@@ -55,7 +55,7 @@ export const gameRouter = createTRPCRouter({
     .input(
       z.object({
         take: z.number().int().default(10),
-        id: z.number().int(),
+        id: z.string(),
       }),
     )
     .query(({ ctx, input }) => {
@@ -72,7 +72,7 @@ export const gameRouter = createTRPCRouter({
     }),
 
   get: protectedProcedure
-    .input(z.object({ id: z.number().int() }))
+    .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.db.game.findFirst({
         where: {
@@ -90,7 +90,7 @@ export const gameRouter = createTRPCRouter({
     }),
 
   getMatches: protectedProcedure
-    .input(z.object({ id: z.number().int() }))
+    .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       const userWithGroup = {
         include: {
@@ -118,7 +118,7 @@ export const gameRouter = createTRPCRouter({
     }),
 
   promote: adminProcedure
-    .input(z.object({ id: z.number().int() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const game = await ctx.db.game.findFirst({ where: { id: input.id } });
 
@@ -149,7 +149,7 @@ export const gameRouter = createTRPCRouter({
     }),
 
   demote: adminProcedure
-    .input(z.object({ id: z.number().int() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const game = await ctx.db.game.findFirst({ where: { id: input.id } });
 
@@ -188,7 +188,7 @@ export const gameRouter = createTRPCRouter({
             patronId: z.string(),
           })
           .array(),
-        gameId: z.number().int(),
+        gameId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

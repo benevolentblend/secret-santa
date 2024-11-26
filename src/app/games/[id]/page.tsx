@@ -12,7 +12,7 @@ import MatchTable from "./match-table";
 import RecipientColumn from "./table-columns/recipient";
 import SelectRecipients from "./select-recipients";
 
-const UrlSchema = z.object({ id: z.coerce.number().int() });
+const UrlSchema = z.object({ id: z.string() });
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const role = await getRole();

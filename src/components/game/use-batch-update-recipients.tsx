@@ -39,11 +39,11 @@ export type UserWithGroup = Prisma.UserGetPayload<{
 }>;
 
 interface useSelectRecipients {
-  gameId: number;
+  gameId: string;
 }
 
 export type updateRecipientArgs = {
-  matchId: number;
+  matchId: string;
   recipientId: string | null;
 };
 

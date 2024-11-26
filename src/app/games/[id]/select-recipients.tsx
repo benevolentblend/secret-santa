@@ -18,7 +18,7 @@ import {
 } from "~/components/ui/select";
 
 interface SelectRecipientsProps {
-  gameId: number;
+  gameId: string;
 }
 
 const SelectRecipients: React.FC<SelectRecipientsProps> = ({ gameId }) => {
