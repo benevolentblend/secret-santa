@@ -26,6 +26,7 @@ export const env = createEnv({
     FACEBOOK_CLIENT_SECRET: z.string(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
+    PROFILE_REQUIRES_GAME: z.coerce.boolean(),
   },
 
   /**
@@ -50,6 +51,7 @@ export const env = createEnv({
     FACEBOOK_CLIENT_SECRET: process.env.FACEBOOK_CLIENT_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    PROFILE_REQUIRES_GAME: process.env.PROFILE_REQUIRES_GAME,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
