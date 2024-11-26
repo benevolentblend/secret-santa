@@ -8,6 +8,8 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
+import { env } from "~/env";
+
 const ids = z.string().array();
 
 export const userRouter = createTRPCRouter({
@@ -251,7 +253,7 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      if (gameCount === 0) {
+      if (env.PROFILE_REQUIRES_GAME && gameCount === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "You must be in at least one game to create a profile",
