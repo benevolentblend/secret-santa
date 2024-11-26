@@ -1,7 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type Adapter } from "next-auth/adapters";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import FacebookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "~/env";
@@ -40,13 +39,6 @@ export const authConfig = {
       name: "Google",
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-    }),
-    FacebookProvider({
-      id: "facebook",
-      name: "Facebook",
-      clientId: env.FACEBOOK_CLIENT_ID,
-      clientSecret: env.FACEBOOK_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
   ],
