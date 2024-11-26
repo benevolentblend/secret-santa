@@ -94,6 +94,15 @@ model User {
     patronGames    GameMatch[] @relation("patron")
     group          Group?      @relation(fields: [groupId], references: [id])
     groupId        String?
+    profile        Profile?
+    profileId      String?
+}
+
+model Profile {
+    id     String @id @default(cuid())
+    notes  String // @db.Text
+    userId String @unique
+    User   User   @relation(fields: [userId], references: [id])
 }
 
 model Group {

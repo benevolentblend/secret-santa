@@ -237,6 +237,37 @@ export const userRouter = createTRPCRouter({
         include: {
           patronGames: true,
           group: true,
+          profile: true,
+        },
+      });
+    }),
+
+  updateProfile: protectedProcedure
+    .input(z.object({ notes: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const gameCount = await ctx.db.gameMatch.count({
+        where: {
+          patronId: ctx.session.user.id,
+        },
+      });
+
+      if (gameCount === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You must be in at least one game to create a profile",
+        });
+      }
+
+      return ctx.db.profile.upsert({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        update: {
+          notes: input.notes,
+        },
+        create: {
+          userId: ctx.session.user.id,
+          notes: input.notes,
         },
       });
     }),

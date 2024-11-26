@@ -4,7 +4,6 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
@@ -115,21 +114,23 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
           )
           .map(({ href, content }) => (
             <NavigationMenuItem key={href}>
-              <NavigationMenuLink
-                href={href}
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  isDesktop ? "" : "w-max",
-                )}
-              >
-                {content}
-              </NavigationMenuLink>
+              <Link href={href} legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    isDesktop ? "" : "w-max",
+                  )}
+                >
+                  {content}
+                </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
           ))}
 
         {!isDesktop && (
           <>
             <NavigationMenuItem>
+              <Link href="/profile" legacyBehavior passHref></Link>
               <NavigationMenuLink
                 className={cn(navigationMenuTriggerStyle(), "w-max")}
                 href="/profile"

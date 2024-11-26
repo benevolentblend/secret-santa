@@ -1,27 +1,84 @@
 "use client";
 
-import { User } from "@prisma/client";
-import { useState } from "react";
+import type { Prisma } from "@prisma/client";
 import RichTextEditor from "../text-editor";
 
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import {
+  Form,
+  FormMessage,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "../ui/form";
+import { Button } from "../ui/button";
+import { api } from "~/trpc/react";
+
+type UserWithProfile = Prisma.UserGetPayload<{
+  include: {
+    profile: true;
+  };
+}>;
+
 interface ProfileProps {
-  user?: User;
+  user: UserWithProfile;
 }
 
+const profileSchema = z.object({
+  notes: z.string().min(5, {
+    message: "Your notes should be at least 5 characters.",
+  }),
+});
+
 const Profile: React.FC<ProfileProps> = ({ user }) => {
-  const [likes, setLikes] = useState("");
-  const [dislikes, setDisikes] = useState("");
+  const notes = user.profile?.notes ?? "";
+
+  const form = useForm<z.infer<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      notes,
+    },
+  });
+
+  const updateProfile = api.user.updateProfile.useMutation({
+    onSuccess: () => toast.info("Profile updated successfully."),
+    onError: ({ message }) => toast.error(message),
+  });
+
+  const onSubmit = (values: z.infer<typeof profileSchema>) => {
+    updateProfile.mutate(values);
+  };
 
   return (
-    <div className="render-anchors">
-      <h1 className="text-2xl">Profile</h1>
-      <h2 className="text-xl">Likes</h2>
-      <RichTextEditor value={likes} onChange={(change) => setLikes(change)} />
-      <h2 className="text-xl">Disikes</h2>
-      <RichTextEditor
-        value={dislikes}
-        onChange={(change) => setDisikes(change)}
-      />
+    <div>
+      <h1 className="pt-4 text-2xl font-medium">Profile</h1>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <RichTextEditor {...field} />
+                </FormControl>
+                <FormDescription>
+                  Let your secret Santa know a little about your self. You can
+                  include likes, dislikes, or even links to gift ideas.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
     </div>
   );
 };
