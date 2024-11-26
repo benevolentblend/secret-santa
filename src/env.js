@@ -1,6 +1,10 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+const booleanParamSchema = z
+  .enum(["true", "false"])
+  .transform((value) => value === "true");
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -26,7 +30,7 @@ export const env = createEnv({
     FACEBOOK_CLIENT_SECRET: z.string(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
-    PROFILE_REQUIRES_GAME: z.coerce.boolean(),
+    PROFILE_REQUIRES_GAME: booleanParamSchema,
   },
 
   /**
