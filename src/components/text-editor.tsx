@@ -99,6 +99,7 @@ const RichTextEditor = ({
             // all checks have passed
             return true;
           } catch (error) {
+            console.error(error);
             return false;
           }
         },
@@ -118,6 +119,8 @@ const RichTextEditor = ({
 
             return !disallowedDomains.includes(domain);
           } catch (error) {
+            console.error(error);
+
             return false;
           }
         },

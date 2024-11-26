@@ -55,7 +55,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   assignToGame: adminProcedure
-    .input(z.object({ ids, gameId: z.number().int() }))
+    .input(z.object({ ids, gameId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const game = await ctx.db.game.findFirst({
         where: {
@@ -104,7 +104,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   removeFromGame: adminProcedure
-    .input(z.object({ ids, gameId: z.number().int() }))
+    .input(z.object({ ids, gameId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const game = await ctx.db.game.findFirst({
         where: {
