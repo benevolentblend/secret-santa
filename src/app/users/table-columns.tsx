@@ -4,6 +4,8 @@ import { type ColumnDef } from "@tanstack/react-table";
 
 import { Checkbox } from "~/components/ui/checkbox";
 import { type UserWithGroup } from "./table";
+import Link from "next/link";
+import Avatar from "~/components/user/avatar";
 
 export const columns: ColumnDef<UserWithGroup>[] = [
   {
@@ -31,8 +33,15 @@ export const columns: ColumnDef<UserWithGroup>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    header: "Profile",
+    cell: ({ row }) => (
+      <Link href={`/users/${row.original.id}`}>
+        <div className="flex items-center gap-4 rounded-lg p-2 hover:bg-muted/50">
+          <Avatar user={row.original} />
+          <p>{row.original.name}</p>
+        </div>
+      </Link>
+    ),
   },
   {
     accessorKey: "email",

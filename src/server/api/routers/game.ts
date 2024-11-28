@@ -117,6 +117,25 @@ export const gameRouter = createTRPCRouter({
       });
     }),
 
+  getMatch: protectedProcedure
+    .input(z.object({ gameId: z.string(), patronId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.gameMatch.findFirst({
+        where: {
+          gameId: input.gameId,
+          patronId: input.patronId,
+        },
+        include: {
+          patron: true,
+          recipient: {
+            include: {
+              profile: true,
+            },
+          },
+        },
+      });
+    }),
+
   promote: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

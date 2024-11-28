@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { getRole } from "~/server/auth";
+import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
 import AddUsersButton from "~/components/game/add-users";
 import Permission from "~/components/user/permission";
@@ -11,15 +11,18 @@ import PatronColumn from "./table-columns/patron";
 import MatchTable from "./match-table";
 import RecipientColumn from "./table-columns/recipient";
 import SelectRecipients from "./select-recipients";
+import Match from "./match";
+import { Badge } from "~/components/ui/badge";
 
 const UrlSchema = z.object({ id: z.string() });
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const role = await getRole();
+  const session = await auth();
 
   const columns = [PatronColumn];
 
-  if (!role) redirect("/api/auth/signin");
+  if (!session) redirect("/api/auth/signin");
+  const role = session.user.role;
   const safeParams = UrlSchema.safeParse(await params);
 
   if (safeParams.error) {
@@ -32,27 +35,38 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     return <div>Game not found</div>;
   }
 
-  if (game.status === "Sorting") {
+  if (game.status === "Complete") {
     columns.push(RecipientColumn);
   }
 
   return (
     <>
-      <h1 className="text-2xl">{game.name}</h1>
-      <h3 className="text-xl">{game.status}</h3>
+      <h1 className="pb-2 text-2xl">{game.name}</h1>
+      <h3 className="pb-4 text-xl">
+        <Badge>{game.status}</Badge>
+      </h3>
       <Permission role={role} allowedRoles={["Admin"]}>
-        <div className="flex gap-2">
+        <div className="flex gap-2 pb-2">
           {game.status === "Setup" && <AddUsersButton id={game.id} />}
           {game.status === "Setup" && <RemoveUsersButton id={game.id} />}
           {game.status !== "Complete" && <PromoteButton game={game} />}
           {game.status !== "Setup" && <DemoteButton game={game} />}
         </div>
       </Permission>
-      <div className="pb-4">
-        <MatchTable id={game.id} role={role} columns={columns} />
+      <div className="gap-2 pb-4 lg:flex">
+        <div className="flex-1 pb-2">
+          <MatchTable id={game.id} role={role} columns={columns} />
+        </div>
+        {["Active", "Complete"].includes(game.status) && (
+          <div className="flex-1">
+            <Match gameId={game.id} patronId={session.user.id} />
+          </div>
+        )}
       </div>
 
-      {game.status === "Sorting" && <SelectRecipients gameId={game.id} />}
+      <Permission role={role} allowedRoles={["Admin"]}>
+        {game.status === "Sorting" && <SelectRecipients gameId={game.id} />}
+      </Permission>
     </>
   );
 };

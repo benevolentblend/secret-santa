@@ -25,6 +25,7 @@ const MatchTable: React.FC<UserTableProps> = ({ role, id, columns }) => {
 
   return (
     <DataTable
+      isLoading={getMatches.isLoading}
       role={role}
       columns={columns}
       data={matches}

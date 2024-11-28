@@ -69,8 +69,8 @@ export function DataTable<TData extends { id: string | number }, TValue>({
   const selectedRows = table.getFilteredSelectedRowModel().rows;
 
   return (
-    <div>
-      {!!userActions && (
+    <>
+      {!!userActions.length && (
         <div className="flex gap-2 pb-2">
           {userActions.map((action) => (
             <DataTableAction
@@ -102,7 +102,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
+              <TableRow highlightHover={false}>
                 <TableCell colSpan={columns.length}>
                   <div className="flex flex-col gap-6">
                     <SkeletonRow />
@@ -117,7 +117,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  highlightHover={true}
+                  highlightHover={false}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -142,6 +142,6 @@ export function DataTable<TData extends { id: string | number }, TValue>({
           </TableBody>
         </Table>
       </div>
-    </div>
+    </>
   );
 }
