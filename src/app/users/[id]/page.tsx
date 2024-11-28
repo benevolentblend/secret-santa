@@ -1,5 +1,13 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { ReadOnly } from "~/components/text-editor";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import { getRole } from "~/server/auth";
 import { api } from "~/trpc/server";
 
@@ -21,10 +29,21 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl">{user.name}</h1>
-      {!!user.group && <h3 className="text-xl">{user.group.name}</h3>}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>{user.name}</CardTitle>
+        {!!user.group && <CardDescription>{user.group.name}</CardDescription>}
+      </CardHeader>
+      <CardContent>
+        <h2 className="text-xl">Notes</h2>
+        <ReadOnly
+          value={
+            user.profile?.notes ??
+            `<p><i>This user has not added any notes yet.</i></p>`
+          }
+        />
+      </CardContent>
+    </Card>
   );
 };
 

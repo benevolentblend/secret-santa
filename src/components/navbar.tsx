@@ -185,7 +185,9 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
       ) : (
         <Sheet>
           <SheetTrigger>
-            <HamburgerMenuIcon />
+            <div className="h-10 content-center">
+              <HamburgerMenuIcon />
+            </div>
           </SheetTrigger>
           <SheetContent side="right" className="w-[250px]">
             <SheetHeader>

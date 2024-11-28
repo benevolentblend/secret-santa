@@ -8,6 +8,7 @@ import { api } from "~/trpc/react";
 import Avatar, { PlaceHolderAvatar } from "~/components/user/avatar";
 import GamePreview from "~/components/game/game-preview";
 import { Skeleton } from "~/components/ui/skeleton";
+import { Badge } from "~/components/ui/badge";
 interface GameList {
   games: Game[];
 }
@@ -53,23 +54,25 @@ export function GameList() {
                         <TimeAgo date={game.createdAt} />
                       </div>
                     </div>
-                    <div className="flex w-full items-center justify-between pt-2">
-                      {!users.length && (
+                    <div className="flex w-full items-end justify-between pt-2">
+                      {!users.length ? (
                         <div className="pt-2 text-neutral-600">No players.</div>
+                      ) : (
+                        <div className="flex">
+                          {users.slice(0, cutoffLimit).map((user) => (
+                            <div key={user.id} className="mr-[-10px]">
+                              <Avatar user={user} className="shadow-lg" />
+                            </div>
+                          ))}
+                          {users.length > cutoffLimit && (
+                            <PlaceHolderAvatar
+                              text={`${users.length - cutoffLimit} +`}
+                              className="shadow-lg"
+                            />
+                          )}
+                        </div>
                       )}
-                      <div className="flex">
-                        {users.slice(0, cutoffLimit).map((user) => (
-                          <div key={user.id} className="mr-[-10px]">
-                            <Avatar user={user} className="shadow-lg" />
-                          </div>
-                        ))}
-                        {users.length > cutoffLimit && (
-                          <PlaceHolderAvatar
-                            text={`${users.length - cutoffLimit} +`}
-                            className="shadow-lg"
-                          />
-                        )}
-                      </div>
+                      <Badge>{game.status}</Badge>
                     </div>
                   </GamePreview>
                 </Link>
