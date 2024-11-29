@@ -3,19 +3,13 @@
 import useBatchUpdateRecipients from "~/components/game/use-batch-update-recipients";
 import { Button } from "~/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { api } from "~/trpc/react";
 
 interface SelectRecipientsProps {
   gameId: string;
@@ -34,86 +28,80 @@ const SelectRecipients: React.FC<SelectRecipientsProps> = ({ gameId }) => {
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Select Recipients</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {shadowMatches
-          .sort((a, b) => {
-            const aName = a.patron.name?.toLowerCase() ?? "";
-            const bName = b.patron.name?.toLowerCase() ?? "";
+    <>
+      {shadowMatches
+        .sort((a, b) => {
+          const aName = a.patron.name?.toLowerCase() ?? "";
+          const bName = b.patron.name?.toLowerCase() ?? "";
 
-            if (aName > bName) {
-              return 1;
-            }
-            if (aName < bName) {
-              return -1;
-            }
-            return 0;
-          })
-          .map((shadowMatch) => {
-            const update = (value: string) => {
-              const nullishRecipientId = value !== "Unassigned" ? value : null;
+          if (aName > bName) {
+            return 1;
+          }
+          if (aName < bName) {
+            return -1;
+          }
+          return 0;
+        })
+        .map((shadowMatch) => {
+          const update = (value: string) => {
+            const nullishRecipientId = value !== "Unassigned" ? value : null;
 
-              updateRecipient({
-                recipientId: nullishRecipientId,
-                matchId: shadowMatch.id,
-              });
-            };
+            updateRecipient({
+              recipientId: nullishRecipientId,
+              matchId: shadowMatch.id,
+            });
+          };
 
-            return (
-              <div key={shadowMatch.id}>
-                <div className="flex py-2">
-                  <div className="flex-1 content-center">
-                    {shadowMatch.patron.name}
-                  </div>
-                  <div className="flex-1">
-                    <Select
-                      onValueChange={update}
-                      value={shadowMatch.recipientId ?? "Unassigned"}
-                      key={shadowMatch.id}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a group" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {allPatrons
-                          .filter(({ id }) =>
-                            shadowMatch.patron.group
-                              ? !shadowMatch.patron.group.users.some(
-                                  ({ id: groupUserId }) => groupUserId === id,
-                                )
-                              : id !== shadowMatch.patronId,
-                          )
-                          .map((recipient) => (
-                            <SelectItem
-                              key={recipient.id}
-                              value={recipient.id}
-                              disabled={
-                                !availableRecipients.some(
-                                  ({ id }) => id === recipient.id,
-                                )
-                              }
-                            >
-                              {recipient.name}
-                            </SelectItem>
-                          ))}
-                        <SelectItem value="Unassigned">Unassigned</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+          return (
+            <div key={shadowMatch.id}>
+              <div className="flex py-2">
+                <div className="flex-1 content-center">
+                  {shadowMatch.patron.name}
+                </div>
+                <div className="flex-1">
+                  <Select
+                    onValueChange={update}
+                    value={shadowMatch.recipientId ?? "Unassigned"}
+                    key={shadowMatch.id}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allPatrons
+                        .filter(({ id }) =>
+                          shadowMatch.patron.group
+                            ? !shadowMatch.patron.group.users.some(
+                                ({ id: groupUserId }) => groupUserId === id,
+                              )
+                            : id !== shadowMatch.patronId,
+                        )
+                        .map((recipient) => (
+                          <SelectItem
+                            key={recipient.id}
+                            value={recipient.id}
+                            disabled={
+                              !availableRecipients.some(
+                                ({ id }) => id === recipient.id,
+                              )
+                            }
+                          >
+                            {recipient.name}
+                          </SelectItem>
+                        ))}
+                      <SelectItem value="Unassigned">Unassigned</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            );
-          })}
-      </CardContent>
-      <CardFooter>
-        <Button onClick={save} disabled={!updatedMatches.length}>
-          Save
-        </Button>
-      </CardFooter>
-    </Card>
+            </div>
+          );
+        })}
+
+      <Button onClick={save} disabled={!updatedMatches.length}>
+        Save
+      </Button>
+    </>
   );
 };
 

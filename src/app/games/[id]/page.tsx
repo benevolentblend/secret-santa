@@ -13,6 +13,8 @@ import RecipientColumn from "./table-columns/recipient";
 import SelectRecipients from "./select-recipients";
 import Match from "./match";
 import { Badge } from "~/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import AutoMatch from "./auto-match";
 
 const UrlSchema = z.object({ id: z.string() });
 
@@ -64,9 +66,19 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         )}
       </div>
 
-      <Permission role={role} allowedRoles={["Admin"]}>
-        {game.status === "Sorting" && <SelectRecipients gameId={game.id} />}
-      </Permission>
+      {game.status === "Sorting" && (
+        <Permission role={role} allowedRoles={["Admin"]}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Match</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AutoMatch gameId={game.id} />
+              <SelectRecipients gameId={game.id} />
+            </CardContent>
+          </Card>
+        </Permission>
+      )}
     </>
   );
 };

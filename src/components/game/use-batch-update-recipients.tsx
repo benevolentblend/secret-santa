@@ -115,13 +115,9 @@ const useBatchUpdateRecipients = ({ gameId }: useSelectRecipients) => {
   const reducer = (state: State, action: Action): State => {
     const newState = { ...state };
 
-    console.log("Old State", state);
-
     switch (action.type) {
       case "updateRecipient":
-        debugger;
         const { matchId, recipientId } = action.payload;
-        console.log(action.payload);
 
         const recipient = recipientId
           ? getPatronById(newState.shadowMatches, recipientId)
@@ -151,8 +147,6 @@ const useBatchUpdateRecipients = ({ gameId }: useSelectRecipients) => {
       newState.allPatrons,
       newState.allRecipients,
     );
-
-    console.log("New State", newState);
 
     return newState;
   };
