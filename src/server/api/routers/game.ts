@@ -7,7 +7,23 @@ import {
   adminProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { getPromoteGameStatus, getDemoteGameStatus } from "~/server/db";
+import { getPromoteGameStatus, getDemoteGameStatus, db } from "~/server/db";
+import { Player, UserMap } from "../sort";
+import bruteForceMatch from "../sort/brute-force";
+
+const userWithGroup = {
+  include: {
+    group: {
+      include: {
+        users: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    },
+  },
+};
 
 export const gameRouter = createTRPCRouter({
   create: adminProcedure
@@ -92,20 +108,6 @@ export const gameRouter = createTRPCRouter({
   getMatches: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
-      const userWithGroup = {
-        include: {
-          group: {
-            include: {
-              users: {
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        },
-      };
-
       return ctx.db.gameMatch.findMany({
         where: {
           gameId: input.id,
@@ -285,11 +287,79 @@ export const gameRouter = createTRPCRouter({
       }
     }),
 
-  // sort: adminProcedure
-  //   .input(
-  //     z.object({
-  //       rounds: z.number().int(),
-  //     }),
-  //   )
-  //   .mutation(async ({ ctx, input }) => {}),
+  sort: adminProcedure
+    .input(
+      z.object({
+        rounds: z.number().int(),
+        attempts: z.number().int(),
+        excludeLastMatches: z.number().int().default(3),
+        gameId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const gameMatches = await ctx.db.gameMatch.findMany({
+        where: {
+          gameId: input.gameId,
+        },
+        include: {
+          patron: userWithGroup,
+        },
+      });
+
+      const playerIds = gameMatches.map(({ patronId }) => patronId);
+
+      const users = gameMatches.reduce((result: UserMap, item) => {
+        result[item.patronId] = item.patron;
+        return result;
+      }, {});
+
+      const previousMatches = await db.gameMatch.findMany({
+        where: { patronId: { in: playerIds } },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      const players: Player[] = gameMatches.map(
+        ({ patronId: currentPartonId, patron }) => {
+          // Remove groups and self
+          const availablePlayers = playerIds.filter((playerId) => {
+            if (!patron.group) return playerId !== currentPartonId;
+            const groupIds = patron.group.users.map(({ id }) => id);
+
+            return !groupIds.includes(playerId);
+          });
+
+          // Remove previous matches
+          const userPreviousMatches = previousMatches
+            .filter(({ patronId }) => patronId === currentPartonId)
+            .slice(0, input.excludeLastMatches);
+
+          console.log(`${patron.name} pervious matches`);
+
+          userPreviousMatches.forEach(({ recipientId }) => {
+            if (recipientId) console.log(`${users[recipientId]?.name}`);
+          });
+
+          return [
+            currentPartonId,
+            availablePlayers.filter(
+              (player) =>
+                !userPreviousMatches
+                  .map(({ recipientId }) => recipientId)
+                  .includes(player),
+            ),
+          ];
+        },
+      );
+
+      const result = bruteForceMatch({
+        players,
+        attempts: input.attempts,
+        rounds: input.rounds,
+        users,
+      });
+
+      return result;
+    }),
 });
