@@ -15,6 +15,8 @@ import Match from "./match";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import AutoMatch from "./auto-match";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import HiddenRecipient from "./table-columns/hidden-recipient";
 
 const UrlSchema = z.object({ id: z.string() });
 
@@ -37,6 +39,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     return <div>Game not found</div>;
   }
 
+  if (game.status === "Active" && ["Admin", "Moderator"].includes(role)) {
+    columns.push(HiddenRecipient);
+  }
   if (game.status === "Complete") {
     columns.push(RecipientColumn);
   }
@@ -73,8 +78,19 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
               <CardTitle>Match</CardTitle>
             </CardHeader>
             <CardContent>
-              <AutoMatch gameId={game.id} />
-              <SelectRecipients gameId={game.id} />
+              <Tabs defaultValue="auto">
+                <TabsList>
+                  <TabsTrigger value="auto">Auto Sort</TabsTrigger>
+                  <TabsTrigger value="manual">Manual Sort</TabsTrigger>
+                </TabsList>
+                <TabsContent value="auto">
+                  <AutoMatch gameId={game.id} />
+                </TabsContent>
+
+                <TabsContent value="manual">
+                  <SelectRecipients gameId={game.id} />
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </Permission>

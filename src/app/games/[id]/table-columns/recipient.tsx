@@ -5,7 +5,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { type GameMatchWithUsers } from "~/components/game/use-batch-update-recipients";
 import Link from "next/link";
 
-const SelectRecipient: ColumnDef<GameMatchWithUsers> = {
+const Recipient: ColumnDef<GameMatchWithUsers> = {
   header: "Recipient",
   cell: ({ row }) => {
     if (!row.original.recipient) return "Unassigned";
@@ -21,4 +21,4 @@ const SelectRecipient: ColumnDef<GameMatchWithUsers> = {
   },
 };
 
-export default SelectRecipient;
+export default Recipient;
