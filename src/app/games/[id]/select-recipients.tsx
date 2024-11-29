@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { api } from "~/trpc/react";
 
 interface SelectRecipientsProps {
   gameId: string;

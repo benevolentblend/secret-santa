@@ -1,10 +1,7 @@
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 
 export type Player = [string, string[]];
-export type UserMap = {
-  [key: string]: User;
-};
-
+export type UserMap = Record<string, User>;
 export type MatchedPlayer = [string, string];
 
 export const getRandomValues = (max: number) => Math.floor(Math.random() * max);

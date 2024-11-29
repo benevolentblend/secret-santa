@@ -1,4 +1,9 @@
-import { getRandomValues, MatchedPlayer, Player, UserMap } from ".";
+import {
+  getRandomValues,
+  type MatchedPlayer,
+  type Player,
+  type UserMap,
+} from ".";
 
 type BruteForceMatchArgs = {
   players: Player[];
@@ -91,7 +96,7 @@ const bruteForceMatch = ({
       continue;
     }
 
-    const match = validMatches[getRandomValues(validMatches.length)] as string;
+    const match = validMatches[getRandomValues(validMatches.length)]!;
 
     matchedPlayers[matchingIndex] = [currentPlayer[0], match];
 

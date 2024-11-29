@@ -8,7 +8,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import { getPromoteGameStatus, getDemoteGameStatus, db } from "~/server/db";
-import { Player, UserMap } from "../sort";
+import type { Player, UserMap } from "../sort";
 import bruteForceMatch from "../sort/brute-force";
 
 const userWithGroup = {
