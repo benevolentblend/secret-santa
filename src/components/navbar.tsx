@@ -10,7 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
 import { useMediaQuery } from "~/hooks/use-media-query";
-import { type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Sheet,
   SheetTrigger,
@@ -82,6 +82,7 @@ const BaseNavBar: React.FC<NavBarBase> = ({ children, wrapperStyle }) => (
 
 const NavBar: React.FC<NavBarProps> = ({ session }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   if (!session) {
     return (
@@ -120,6 +121,7 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
                     navigationMenuTriggerStyle(),
                     isDesktop ? "" : "w-max",
                   )}
+                  onClick={() => setMobileNavOpen(false)}
                 >
                   {content}
                 </NavigationMenuLink>
@@ -130,12 +132,14 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
         {!isDesktop && (
           <>
             <NavigationMenuItem>
-              <NavigationMenuLink
-                className={cn(navigationMenuTriggerStyle(), "w-max")}
-                href="/profile"
-              >
-                Profile
-              </NavigationMenuLink>
+              <Link href="/profile" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={cn(navigationMenuTriggerStyle(), "w-max")}
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  Profile
+                </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <Button variant="ghost" onClick={() => signOut()}>
@@ -183,7 +187,7 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
           </DropdownMenu>
         </div>
       ) : (
-        <Sheet>
+        <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
           <SheetTrigger>
             <div className="h-10 content-center">
               <HamburgerMenuIcon />
