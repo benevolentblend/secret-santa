@@ -1,11 +1,12 @@
 import "~/styles/globals.css";
 
-import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import NavBar from "~/components/navbar";
+import { GeistSans } from "geist/font/sans";
+
 import { auth } from "~/server/auth";
+import NavBar from "~/components/navbar";
 import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {

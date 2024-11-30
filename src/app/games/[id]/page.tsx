@@ -1,21 +1,25 @@
 import { redirect } from "next/navigation";
-import { z } from "zod";
-import { auth } from "~/server/auth";
+
 import { api } from "~/trpc/server";
-import AddUsersButton from "~/components/game/add-users";
+import { z } from "zod";
+
+import { auth } from "~/server/auth";
 import RemoveUsersButton from "~/components/game/add-remove";
-import PromoteButton from "./promote-button";
-import DemoteButton from "./demote-button";
-import PatronColumn from "./table-columns/patron";
-import MatchTable from "./match-table";
-import RecipientColumn from "./table-columns/recipient";
-import SelectRecipients from "./select-recipients";
-import Match from "./match";
+import AddUsersButton from "~/components/game/add-users";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import AutoMatch from "./auto-match";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+
+import AutoMatch from "./auto-match";
+import DemoteButton from "./demote-button";
+import Match from "./match";
+import MatchTable from "./match-table";
+import promote from "./promote";
+import PromoteButton from "./promote-button";
+import SelectRecipients from "./select-recipients";
 import HiddenRecipient from "./table-columns/hidden-recipient";
+import PatronColumn from "./table-columns/patron";
+import RecipientColumn from "./table-columns/recipient";
 
 const UrlSchema = z.object({ id: z.string() });
 
@@ -59,7 +63,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         <div className="flex gap-2 pb-2">
           {game.status === "Setup" && <AddUsersButton id={game.id} />}
           {game.status === "Setup" && <RemoveUsersButton id={game.id} />}
-          {game.status !== "Complete" && <PromoteButton game={game} />}
+          {game.status !== "Complete" && (
+            <PromoteButton game={game} promoteAction={promote} />
+          )}
           {game.status !== "Setup" && <DemoteButton game={game} />}
         </div>
       )}

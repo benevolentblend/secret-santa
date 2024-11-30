@@ -1,7 +1,10 @@
-import UserTable from "~/app/users/table";
 import { redirect } from "next/navigation";
+
+import UserTable from "~/app/users/table";
+
 import { getRole } from "~/server/auth";
-import { hasModeratorAccess } from "~/server/db";
+
+import { hasModeratorAccess } from "~/lib/utils";
 
 export default async function Page() {
   const role = await getRole();

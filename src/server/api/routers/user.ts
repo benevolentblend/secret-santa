@@ -1,15 +1,14 @@
 import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { env } from "~/env";
 import { z } from "zod";
 
 import {
-  createTRPCRouter,
   adminProcedure,
-  protectedProcedure,
+  createTRPCRouter,
   moderatorProcedure,
+  protectedProcedure,
 } from "~/server/api/trpc";
-
-import { env } from "~/env";
 
 const ids = z.string().array();
 
@@ -51,104 +50,6 @@ export const userRouter = createTRPCRouter({
         },
         data: {
           groupId: input.groupId,
-        },
-      });
-    }),
-
-  assignToGame: adminProcedure
-    .input(z.object({ ids, gameId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const game = await ctx.db.game.findFirst({
-        where: {
-          id: input.gameId,
-        },
-      });
-
-      const userCount = await ctx.db.user.count({
-        where: {
-          id: {
-            in: input.ids,
-          },
-        },
-      });
-
-      if (!game) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Game does not exist",
-        });
-      }
-
-      if (game.status !== "Setup") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "Unable to assign users to a sorting, active or completed game.",
-        });
-      }
-
-      if (userCount !== input.ids.length) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Unable to find users to add.",
-        });
-      }
-
-      const matches = input.ids.map((id) => ({
-        gameId: input.gameId,
-        patronId: id,
-      }));
-
-      return ctx.db.gameMatch.createMany({
-        data: matches,
-      });
-    }),
-
-  removeFromGame: adminProcedure
-    .input(z.object({ ids, gameId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const game = await ctx.db.game.findFirst({
-        where: {
-          id: input.gameId,
-        },
-      });
-
-      const matches = await ctx.db.gameMatch.findMany({
-        where: {
-          patronId: {
-            in: input.ids,
-          },
-          gameId: input.gameId,
-        },
-      });
-
-      if (!game) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Game does not exist",
-        });
-      }
-
-      if (game.status !== "Setup") {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "Unable to remove users from a sorting, active or completed game.",
-        });
-      }
-
-      if (matches.length !== input.ids.length) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Unable to find users to remove.",
-        });
-      }
-
-      return ctx.db.gameMatch.deleteMany({
-        where: {
-          id: {
-            in: matches.map((match) => match.id),
-          },
         },
       });
     }),

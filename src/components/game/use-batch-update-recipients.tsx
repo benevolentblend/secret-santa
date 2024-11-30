@@ -1,7 +1,8 @@
-import type { Prisma, User } from "@prisma/client";
 import { useEffect, useMemo, useReducer } from "react";
-import { toast } from "sonner";
+
+import type { Prisma, User } from "@prisma/client";
 import { api } from "~/trpc/react";
+import { toast } from "sonner";
 
 type GroupWithUser = {
   include: {

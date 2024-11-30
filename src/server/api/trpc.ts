@@ -12,7 +12,9 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "~/server/auth";
-import { db, hasAdminAccess, hasModeratorAccess } from "~/server/db";
+import { db } from "~/server/db";
+
+import { hasAdminAccess, hasModeratorAccess } from "~/lib/utils";
 
 /**
  * 1. CONTEXT

@@ -1,24 +1,28 @@
 "use client";
+
+import { useCallback } from "react";
+
+import Link from "@tiptap/extension-link";
 import {
-  useEditor,
   EditorContent,
+  useEditor,
   type Editor,
   type UseEditorOptions,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
 import {
   Bold,
-  Strikethrough,
   Italic,
+  Link as LinkIcon,
   List,
   ListOrdered,
-  Link as LinkIcon,
+  Strikethrough,
   Unlink,
 } from "lucide-react";
-import { Toggle } from "~/components/ui/toggle";
+
 import { Separator } from "~/components/ui/separator";
-import { useCallback } from "react";
+import { Toggle } from "~/components/ui/toggle";
+
 import { Skeleton } from "./ui/skeleton";
 
 const SkeletonEditor = () => (

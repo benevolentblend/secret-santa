@@ -1,6 +1,7 @@
+import { api } from "~/trpc/server";
+
 import { ReadOnly } from "~/components/text-editor";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { api } from "~/trpc/server";
 
 interface MatchProps {
   gameId: string;

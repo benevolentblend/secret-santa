@@ -1,10 +1,11 @@
 "use client";
 
 import { type Prisma, type UserRole } from "@prisma/client";
-
-import { api } from "~/trpc/react";
-import { DataTable } from "~/components/ui/data-table";
 import { columns } from "~/app/users/table-columns";
+import { api } from "~/trpc/react";
+
+import { DataTable } from "~/components/ui/data-table";
+
 import groupAction from "./table-actions/group";
 import roleAction from "./table-actions/role";
 

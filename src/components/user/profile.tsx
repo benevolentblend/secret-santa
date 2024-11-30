@@ -1,23 +1,23 @@
 "use client";
 
-import type { Prisma } from "@prisma/client";
-import RichTextEditor from "../text-editor";
-
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Prisma } from "@prisma/client";
+import { api } from "~/trpc/react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
+import RichTextEditor from "../text-editor";
+import { Button } from "../ui/button";
 import {
   Form,
-  FormMessage,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "../ui/form";
-import { Button } from "../ui/button";
-import { api } from "~/trpc/react";
 
 type UserWithProfile = Prisma.UserGetPayload<{
   include: {

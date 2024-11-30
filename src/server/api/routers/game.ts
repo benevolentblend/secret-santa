@@ -1,21 +1,24 @@
-import { Game, Prisma, type GameStatus } from "@prisma/client";
+import { type User } from "next-auth";
+
+import { Prisma, type Game, type GameStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
   createTRPCRouter,
-  protectedProcedure,
   moderatorProcedure,
+  protectedProcedure,
 } from "~/server/api/trpc";
+import { db } from "~/server/db";
+
 import {
-  getPromoteGameStatus,
   getDemoteGameStatus,
-  db,
+  getPromoteGameStatus,
   hasAdminAccess,
-} from "~/server/db";
+} from "~/lib/utils";
+
 import type { Player, UserMap } from "../sort";
 import bruteForceMatch from "../sort/brute-force";
-import { User } from "next-auth";
 
 const ids = z.string().array();
 
@@ -186,6 +189,22 @@ export const gameRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "Cannot promote completed game.",
         });
+      }
+
+      if (game.status == "Sorting") {
+        const unmatchedPatronCount = await ctx.db.gameMatch.count({
+          where: {
+            gameId: input.id,
+            recipientId: null,
+          },
+        });
+
+        if (unmatchedPatronCount > 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Unable to promote game with unmatched patrons.",
+          });
+        }
       }
 
       throwIfNotPermissed(ctx.session.user, game);

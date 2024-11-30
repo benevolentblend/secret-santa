@@ -1,25 +1,28 @@
 "use client";
 
 import { useState } from "react";
+
 import { api } from "~/trpc/react";
-import { type TableAction } from "~/components/ui/data-table-action";
 import { toast } from "sonner";
+
+import { Button } from "~/components/ui/button";
+import { type TableAction } from "~/components/ui/data-table-action";
 import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "~/components/ui/select";
-import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+
 import { type UserWithGroup } from "../table";
 
 const groupAction: TableAction<UserWithGroup> = {
