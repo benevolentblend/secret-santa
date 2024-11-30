@@ -24,22 +24,21 @@ import { type UserWithGroup } from "../table";
 
 const groupAction: TableAction<UserWithGroup> = {
   label: "Group",
-  allowedRoles: ["Admin"],
+  allowedRoles: ["Moderator", "Admin"],
   Content: (rows, close) => {
     const [groupId, setGroupId] = useState("");
     const [newGroupName, setNewGroupName] = useState("");
     const requestGroups = api.group.getAll.useQuery({});
     const utils = api.useUtils();
     const handleMutation = {
-      onSuccess() {
+      async onSuccess() {
+        await utils.group.getAll.invalidate();
+        await utils.user.getAll.invalidate();
+
         close();
       },
       onError() {
-        console.log("ERROR");
         toast.error("Unable to update groups");
-      },
-      async onSettled() {
-        await utils.user.getAll.invalidate();
       },
     };
 

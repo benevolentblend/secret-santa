@@ -24,7 +24,7 @@ const AddUsersButton: React.FC<AddUserButtonProps> = ({ id }) => {
   const [addUserDialogOpen, setAddUserDialogOpen] = useState(false);
   const [userIds, setUserIds] = useState<string[]>([]);
   const utils = api.useUtils();
-  const addUsersToGame = api.user.assignToGame.useMutation({
+  const addToGame = api.game.assignToGame.useMutation({
     async onError() {
       toast.error("An error occured when adding users to the game");
     },
@@ -42,7 +42,7 @@ const AddUsersButton: React.FC<AddUserButtonProps> = ({ id }) => {
   }));
 
   function save() {
-    addUsersToGame.mutate({ gameId: id, ids: userIds });
+    addToGame.mutate({ gameId: id, ids: userIds });
     setAddUserDialogOpen(false);
   }
 

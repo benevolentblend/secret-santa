@@ -1,15 +1,23 @@
-import { Prisma, type GameStatus } from "@prisma/client";
+import { Game, Prisma, type GameStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
   createTRPCRouter,
-  adminProcedure,
   protectedProcedure,
+  moderatorProcedure,
 } from "~/server/api/trpc";
-import { getPromoteGameStatus, getDemoteGameStatus, db } from "~/server/db";
+import {
+  getPromoteGameStatus,
+  getDemoteGameStatus,
+  db,
+  hasAdminAccess,
+} from "~/server/db";
 import type { Player, UserMap } from "../sort";
 import bruteForceMatch from "../sort/brute-force";
+import { User } from "next-auth";
+
+const ids = z.string().array();
 
 const userWithGroup = {
   include: {
@@ -25,12 +33,26 @@ const userWithGroup = {
   },
 };
 
+const throwIfNotPermissed = (user: User, game: Game) => {
+  const { role, id } = user;
+  const canManageGame =
+    role === "Admin" || (role === "Moderator" && game.managerId === id);
+
+  if (!canManageGame) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Not permissed.",
+    });
+  }
+};
+
 export const gameRouter = createTRPCRouter({
-  create: adminProcedure
+  create: moderatorProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.game.create({
         data: {
+          managerId: ctx.session.user.id,
           name: input.name,
         },
       });
@@ -41,16 +63,25 @@ export const gameRouter = createTRPCRouter({
     .query(({ ctx, input }) => {
       const { role, id: userId } = ctx.session.user;
 
-      const limitUsersGames =
-        role === "User"
+      const isInGame = {
+        GameMatches: {
+          some: {
+            patronId: userId,
+          },
+        },
+      };
+
+      const isGameManager = {
+        managerId: ctx.session.user.id,
+      };
+
+      const limitRoleGames = hasAdminAccess(role)
+        ? undefined
+        : role === "Moderator"
           ? {
-              GameMatches: {
-                some: {
-                  patronId: userId,
-                },
-              },
+              OR: [isInGame, isGameManager],
             }
-          : undefined;
+          : isInGame;
 
       return ctx.db.game.findMany({
         take: input.take,
@@ -63,11 +94,11 @@ export const gameRouter = createTRPCRouter({
             },
           },
         },
-        where: limitUsersGames,
+        where: limitRoleGames,
       });
     }),
 
-  getAvailableUsers: protectedProcedure
+  getAvailableUsers: moderatorProcedure
     .input(
       z.object({
         take: z.number().int().default(10),
@@ -138,7 +169,7 @@ export const gameRouter = createTRPCRouter({
       });
     }),
 
-  promote: adminProcedure
+  promote: moderatorProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const game = await ctx.db.game.findFirst({ where: { id: input.id } });
@@ -157,6 +188,8 @@ export const gameRouter = createTRPCRouter({
         });
       }
 
+      throwIfNotPermissed(ctx.session.user, game);
+
       const newStatus: GameStatus = getPromoteGameStatus(game.status);
 
       return ctx.db.game.update({
@@ -169,7 +202,7 @@ export const gameRouter = createTRPCRouter({
       });
     }),
 
-  demote: adminProcedure
+  demote: moderatorProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const game = await ctx.db.game.findFirst({ where: { id: input.id } });
@@ -188,6 +221,8 @@ export const gameRouter = createTRPCRouter({
         });
       }
 
+      throwIfNotPermissed(ctx.session.user, game);
+
       const newStatus: GameStatus = getDemoteGameStatus(game.status);
 
       return ctx.db.game.update({
@@ -200,7 +235,109 @@ export const gameRouter = createTRPCRouter({
       });
     }),
 
-  assignRecipients: adminProcedure
+  assignToGame: moderatorProcedure
+    .input(z.object({ ids, gameId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const game = await ctx.db.game.findFirst({
+        where: {
+          id: input.gameId,
+        },
+      });
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Game does not exist",
+        });
+      }
+
+      if (game.status !== "Setup") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Unable to assign users to a sorting, active or completed game.",
+        });
+      }
+
+      throwIfNotPermissed(ctx.session.user, game);
+
+      const userCount = await ctx.db.user.count({
+        where: {
+          id: {
+            in: input.ids,
+          },
+        },
+      });
+
+      if (userCount !== input.ids.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to find users to add.",
+        });
+      }
+
+      const matches = input.ids.map((id) => ({
+        gameId: input.gameId,
+        patronId: id,
+      }));
+
+      return ctx.db.gameMatch.createMany({
+        data: matches,
+      });
+    }),
+
+  removeFromGame: moderatorProcedure
+    .input(z.object({ ids, gameId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const game = await ctx.db.game.findFirst({
+        where: {
+          id: input.gameId,
+        },
+      });
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Game does not exist",
+        });
+      }
+
+      if (game.status !== "Setup") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Unable to remove users from a sorting, active or completed game.",
+        });
+      }
+
+      throwIfNotPermissed(ctx.session.user, game);
+
+      const matches = await ctx.db.gameMatch.findMany({
+        where: {
+          patronId: {
+            in: input.ids,
+          },
+          gameId: input.gameId,
+        },
+      });
+
+      if (matches.length !== input.ids.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to find users to remove.",
+        });
+      }
+
+      return ctx.db.gameMatch.deleteMany({
+        where: {
+          id: {
+            in: matches.map((match) => match.id),
+          },
+        },
+      });
+    }),
+
+  assignRecipients: moderatorProcedure
     .input(
       z.object({
         matches: z
@@ -242,6 +379,8 @@ export const gameRouter = createTRPCRouter({
             "Unable to assign secipients in a setup, active, or completed game.",
         });
       }
+
+      throwIfNotPermissed(ctx.session.user, game);
 
       const gameMatches = await ctx.db.gameMatch.findMany({
         where: {
@@ -287,7 +426,7 @@ export const gameRouter = createTRPCRouter({
       }
     }),
 
-  sort: adminProcedure
+  sort: moderatorProcedure
     .input(
       z.object({
         rounds: z.number().int(),
@@ -305,6 +444,28 @@ export const gameRouter = createTRPCRouter({
           patron: userWithGroup,
         },
       });
+
+      const game = await ctx.db.game.findFirst({
+        where: {
+          id: input.gameId,
+        },
+      });
+
+      if (!game) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Game does not exist.",
+        });
+      }
+
+      if (game.status !== "Sorting") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Unable to sort a setup, active, or completed game.",
+        });
+      }
+
+      throwIfNotPermissed(ctx.session.user, game);
 
       const playerIds = gameMatches.map(({ patronId }) => patronId);
 

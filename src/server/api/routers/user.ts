@@ -6,6 +6,7 @@ import {
   createTRPCRouter,
   adminProcedure,
   protectedProcedure,
+  moderatorProcedure,
 } from "~/server/api/trpc";
 
 import { env } from "~/env";
@@ -13,7 +14,7 @@ import { env } from "~/env";
 const ids = z.string().array();
 
 export const userRouter = createTRPCRouter({
-  assignToGroup: adminProcedure
+  assignToGroup: moderatorProcedure
     .input(z.object({ ids, groupId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const groupCount = await ctx.db.group.count({
@@ -180,7 +181,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  assignToNewGroup: adminProcedure
+  assignToNewGroup: moderatorProcedure
     .input(z.object({ ids, newGroupName: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const userCount = await ctx.db.user.count({
