@@ -28,8 +28,8 @@ model Game {
     createdAt   DateTime    @default(now())
     updatedAt   DateTime    @updatedAt
     GameMatches GameMatch[]
-    managerId   String?
-    manager     User?       @relation(fields: [managerId], references: [id])
+    managerId   String
+    manager     User        @relation(fields: [managerId], references: [id])
 }
 
 model GameMatch {

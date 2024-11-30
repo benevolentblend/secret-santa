@@ -1,4 +1,4 @@
-import { type GameStatus, PrismaClient } from "@prisma/client";
+import { type GameStatus, PrismaClient, UserRole } from "@prisma/client";
 
 import { env } from "~/env";
 
@@ -42,3 +42,11 @@ export const getDemoteGameStatus = (state: DemoteStatus): GameStatus => {
 
   return "Setup";
 };
+
+export const hasUserAccess = (role: UserRole) =>
+  ["User", "Moderator", "Admin"].includes(role);
+
+export const hasModeratorAccess = (role: UserRole) =>
+  ["Moderator", "Admin"].includes(role);
+
+export const hasAdminAccess = (role: UserRole) => role === "Admin";

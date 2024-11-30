@@ -24,7 +24,7 @@ const RemoveUsersButton: React.FC<RemoveUserButtonProps> = ({ id }) => {
   const [addUserDialogOpen, setAddUserDialogOpen] = useState(false);
   const [userIds, setUserIds] = useState<string[]>([]);
   const utils = api.useUtils();
-  const addUsersToGame = api.user.removeFromGame.useMutation({
+  const removeFromGame = api.game.removeFromGame.useMutation({
     async onError() {
       toast.error("An error occured when removing users from the game");
     },
@@ -42,7 +42,7 @@ const RemoveUsersButton: React.FC<RemoveUserButtonProps> = ({ id }) => {
   }));
 
   function save() {
-    addUsersToGame.mutate({ gameId: id, ids: userIds });
+    removeFromGame.mutate({ gameId: id, ids: userIds });
     setAddUserDialogOpen(false);
   }
 

@@ -12,7 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "~/server/auth";
-import { db } from "~/server/db";
+import { db, hasAdminAccess, hasModeratorAccess } from "~/server/db";
 
 /**
  * 1. CONTEXT
@@ -133,6 +133,31 @@ export const protectedProcedure = t.procedure
   });
 
 /**
+ * Moderator (authenticated with moderator) procedure
+ *
+ * This endpoint requires admin access to run.
+ * the session is valid and guarantees `ctx.session.user` is not null.
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const moderatorProcedure = t.procedure.use(({ ctx, next }) => {
+  if (
+    !ctx.session ||
+    !ctx.session.user ||
+    !hasModeratorAccess(ctx.session.user.role)
+  ) {
+    console.log(ctx.session?.user);
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
+/**
  * Admin (authenticated with admin) procedure
  *
  * This endpoint requires admin access to run.
@@ -141,7 +166,11 @@ export const protectedProcedure = t.procedure
  * @see https://trpc.io/docs/procedures
  */
 export const adminProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user || ctx.session.user.role !== "Admin") {
+  if (
+    !ctx.session ||
+    !ctx.session.user ||
+    !hasAdminAccess(ctx.session.user.role)
+  ) {
     console.log(ctx.session?.user);
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }

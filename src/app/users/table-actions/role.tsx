@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { type UserWithGroup } from "../table";
+import { toast } from "sonner";
 
 const roleAction: TableAction<UserWithGroup> = {
   label: "Role",
@@ -28,11 +29,12 @@ const roleAction: TableAction<UserWithGroup> = {
     const [role, setRole] = useState<UserRole>("Admin");
     const utils = api.useUtils();
     const updateRole = api.user.updateRole.useMutation({
-      onSuccess() {
+      async onSuccess() {
+        await utils.user.getAll.invalidate();
         close();
       },
-      async onSettled() {
-        await utils.user.getAll.invalidate();
+      async onError() {
+        toast.error("Unable to set role");
       },
     });
     const roleSchema = z.nativeEnum(UserRole);

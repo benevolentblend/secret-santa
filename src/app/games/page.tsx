@@ -13,7 +13,7 @@ export default async function Page() {
   return (
     <>
       <div className="py-4">
-        <Permission role={role} allowedRoles={["Admin"]}>
+        <Permission role={role} allowedRoles={["Admin", "Moderator"]}>
           <CreateGameButton />
         </Permission>
       </div>
