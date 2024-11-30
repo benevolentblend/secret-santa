@@ -1,9 +1,9 @@
 import { type Game } from "@prisma/client";
 import { Button } from "~/components/ui/button";
-import { getDemoteGameStatus } from "~/server/db";
 import { api } from "~/trpc/server";
 
 import { revalidatePath } from "next/cache";
+import { getDemoteGameStatus } from "~/lib/utils";
 
 interface DemoteButtonProps {
   game: Game;

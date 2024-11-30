@@ -16,7 +16,7 @@ const HiddenRecipientItem: React.FC<React.PropsWithChildren> = ({
 
   return (
     <div className="flex items-center">
-      <Button variant="outline" onClick={() => setShown(!shown)}>
+      <Button variant="outline" size="sm" onClick={() => setShown(!shown)}>
         {shown ? <EyeIcon /> : <EyeOffIcon />}
       </Button>
       <div className={cn(!shown && "invisible")}>{children}</div>

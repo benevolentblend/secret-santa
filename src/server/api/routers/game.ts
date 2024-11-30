@@ -7,15 +7,15 @@ import {
   protectedProcedure,
   moderatorProcedure,
 } from "~/server/api/trpc";
-import {
-  getPromoteGameStatus,
-  getDemoteGameStatus,
-  db,
-  hasAdminAccess,
-} from "~/server/db";
+import { db } from "~/server/db";
 import type { Player, UserMap } from "../sort";
 import bruteForceMatch from "../sort/brute-force";
 import { User } from "next-auth";
+import {
+  getDemoteGameStatus,
+  getPromoteGameStatus,
+  hasAdminAccess,
+} from "~/lib/utils";
 
 const ids = z.string().array();
 
@@ -186,6 +186,22 @@ export const gameRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "Cannot promote completed game.",
         });
+      }
+
+      if (game.status == "Sorting") {
+        const unmatchedPatronCount = await ctx.db.gameMatch.count({
+          where: {
+            gameId: input.id,
+            recipientId: null,
+          },
+        });
+
+        if (unmatchedPatronCount > 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Unable to promote game with unmatched patrons.",
+          });
+        }
       }
 
       throwIfNotPermissed(ctx.session.user, game);

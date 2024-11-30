@@ -10,9 +10,10 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { hasAdminAccess, hasModeratorAccess } from "~/lib/utils";
 
 import { auth } from "~/server/auth";
-import { db, hasAdminAccess, hasModeratorAccess } from "~/server/db";
+import { db } from "~/server/db";
 
 /**
  * 1. CONTEXT

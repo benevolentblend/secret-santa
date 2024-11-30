@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import AutoMatch from "./auto-match";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import HiddenRecipient from "./table-columns/hidden-recipient";
+import promote from "./promote";
 
 const UrlSchema = z.object({ id: z.string() });
 
@@ -59,7 +60,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         <div className="flex gap-2 pb-2">
           {game.status === "Setup" && <AddUsersButton id={game.id} />}
           {game.status === "Setup" && <RemoveUsersButton id={game.id} />}
-          {game.status !== "Complete" && <PromoteButton game={game} />}
+          {game.status !== "Complete" && (
+            <PromoteButton game={game} promoteAction={promote} />
+          )}
           {game.status !== "Setup" && <DemoteButton game={game} />}
         </div>
       )}

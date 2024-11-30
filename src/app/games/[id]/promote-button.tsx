@@ -1,29 +1,35 @@
+"use client";
+
 import { type Game } from "@prisma/client";
 import { Button } from "~/components/ui/button";
-import { getPromoteGameStatus } from "~/server/db";
-import { api } from "~/trpc/server";
-
-import { revalidatePath } from "next/cache";
-
+import { getPromoteGameStatus } from "~/lib/utils";
+import { api } from "~/trpc/react";
 interface PromoteButtonProps {
   game: Game;
+  promoteAction: (gameId: string) => void;
 }
 
-const PromoteButton: React.FC<PromoteButtonProps> = async ({ game }) => {
+const PromoteButton: React.FC<PromoteButtonProps> = ({
+  game,
+  promoteAction,
+}) => {
   if (game.status === "Complete") {
     return;
   }
 
-  const promote = async () => {
-    "use server";
-    await api.game.promote({ id: game.id });
-    revalidatePath(`/game/${game.id}`);
-  };
+  const getMatches = api.game.getMatches.useQuery({ id: game.id });
+  const unmatchedPatronsCount =
+    getMatches.data?.filter(({ recipientId }) => recipientId === null).length ??
+    1;
 
   const nextGameStatus = getPromoteGameStatus(game.status);
 
   return (
-    <Button variant="outline" onClick={promote}>
+    <Button
+      variant="outline"
+      onClick={() => promoteAction(game.id)}
+      disabled={game.status === "Sorting" && unmatchedPatronsCount > 0}
+    >
       Promote to {nextGameStatus}
     </Button>
   );
