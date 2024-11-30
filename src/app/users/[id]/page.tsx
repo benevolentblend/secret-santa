@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation";
+
+import { api } from "~/trpc/server";
 import { z } from "zod";
+
+import { getRole } from "~/server/auth";
 import { ReadOnly } from "~/components/text-editor";
 import {
   Card,
@@ -8,8 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { getRole } from "~/server/auth";
-import { api } from "~/trpc/server";
 
 const UrlSchema = z.object({ id: z.coerce.string() });
 

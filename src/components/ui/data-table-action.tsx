@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./dialog";
-import { type Row } from "@tanstack/react-table";
-import { Button } from "./button";
+
 import { type UserRole } from "@prisma/client";
+import { type Row } from "@tanstack/react-table";
+
+import { Button } from "./button";
+import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 
 export type TableAction<TData> = {
   label: string;

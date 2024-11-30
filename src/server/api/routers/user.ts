@@ -1,15 +1,14 @@
 import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { env } from "~/env";
 import { z } from "zod";
 
 import {
-  createTRPCRouter,
   adminProcedure,
-  protectedProcedure,
+  createTRPCRouter,
   moderatorProcedure,
+  protectedProcedure,
 } from "~/server/api/trpc";
-
-import { env } from "~/env";
 
 const ids = z.string().array();
 

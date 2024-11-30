@@ -1,20 +1,21 @@
 "use client";
 
-import { api } from "~/trpc/react";
 import { useState } from "react";
+
+import { api } from "~/trpc/react";
+import { toast } from "sonner";
+
 import { Button } from "~/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Dialog,
   DialogTrigger,
-  DialogContent,
 } from "~/components/ui/dialog";
-
 import { MultiSelect } from "~/components/ui/multi-select";
-import { toast } from "sonner";
 
 interface RemoveUserButtonProps {
   id: string;

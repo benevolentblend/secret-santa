@@ -1,4 +1,4 @@
-import { GameStatus, UserRole } from "@prisma/client";
+import { type GameStatus, type UserRole } from "@prisma/client";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

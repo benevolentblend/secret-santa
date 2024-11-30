@@ -1,12 +1,15 @@
 "use client";
 
-import Avatar from "~/components/user/avatar";
-import type { ColumnDef } from "@tanstack/react-table";
-import { type GameMatchWithUsers } from "~/components/game/use-batch-update-recipients";
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
+
+import type { ColumnDef } from "@tanstack/react-table";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+
+import { type GameMatchWithUsers } from "~/components/game/use-batch-update-recipients";
 import { Button } from "~/components/ui/button";
+import Avatar from "~/components/user/avatar";
+
 import { cn } from "~/lib/utils";
 
 const HiddenRecipientItem: React.FC<React.PropsWithChildren> = ({

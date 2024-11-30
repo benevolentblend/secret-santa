@@ -1,5 +1,4 @@
-import { type GameStatus, PrismaClient, UserRole } from "@prisma/client";
-
+import { PrismaClient } from "@prisma/client";
 import { env } from "~/env";
 
 const createPrismaClient = () =>

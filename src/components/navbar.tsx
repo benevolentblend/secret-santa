@@ -1,30 +1,21 @@
 "use client";
 
-import { HamburgerMenuIcon } from "@radix-ui/react-icons";
-
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "./ui/navigation-menu";
-import { useMediaQuery } from "~/hooks/use-media-query";
 import { useState, type ReactNode } from "react";
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "./ui/sheet";
 import { type Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
-import { cn } from "~/lib/utils";
-import { type ClassValue } from "clsx";
-import { Button } from "./ui/button";
 import Link from "next/link";
+
+import { type UserRole } from "@prisma/client";
+import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useMediaQuery } from "~/hooks/use-media-query";
+import { type ClassValue } from "clsx";
+
 import Avatar from "~/components/user/avatar";
+
+import { cn } from "~/lib/utils";
+
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,8 +24,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { type UserRole } from "@prisma/client";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "./ui/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 
 type MenuItem = {
   href: string;

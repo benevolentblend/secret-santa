@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
+
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { Checkbox } from "~/components/ui/checkbox";
-import { type UserWithGroup } from "./table";
-import Link from "next/link";
 import Avatar from "~/components/user/avatar";
+
+import { type UserWithGroup } from "./table";
 
 export const columns: ColumnDef<UserWithGroup>[] = [
   {

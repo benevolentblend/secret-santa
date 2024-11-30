@@ -1,8 +1,9 @@
-import { auth } from "~/server/auth";
-
 import { redirect } from "next/navigation";
-import Profile from "~/components/user/profile";
+
 import { api } from "~/trpc/server";
+
+import { auth } from "~/server/auth";
+import Profile from "~/components/user/profile";
 
 export default async function Page() {
   const session = await auth();

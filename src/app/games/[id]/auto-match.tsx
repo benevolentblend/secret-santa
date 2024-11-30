@@ -1,8 +1,9 @@
 "use client";
 
-import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
+import { toast } from "sonner";
+
+import { Button } from "~/components/ui/button";
 
 interface AutoMatchProps {
   gameId: string;

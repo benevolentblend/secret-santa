@@ -1,16 +1,12 @@
 "use client";
 
-import { UserRole } from "@prisma/client";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "~/components/ui/select";
-import { api } from "~/trpc/react";
 import { useState } from "react";
+
+import { UserRole } from "@prisma/client";
+import { api } from "~/trpc/react";
+import { toast } from "sonner";
 import { z } from "zod";
+
 import { Button } from "~/components/ui/button";
 import { type TableAction } from "~/components/ui/data-table-action";
 import {
@@ -19,8 +15,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+
 import { type UserWithGroup } from "../table";
-import { toast } from "sonner";
 
 const roleAction: TableAction<UserWithGroup> = {
   label: "Role",

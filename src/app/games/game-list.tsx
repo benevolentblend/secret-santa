@@ -1,14 +1,16 @@
 "use client";
 
-import TimeAgo from "react-timeago";
-import { type Game } from "@prisma/client";
 import Link from "next/link";
 
+import { type Game } from "@prisma/client";
 import { api } from "~/trpc/react";
-import Avatar, { PlaceHolderAvatar } from "~/components/user/avatar";
+import TimeAgo from "react-timeago";
+
 import GamePreview from "~/components/game/game-preview";
-import { Skeleton } from "~/components/ui/skeleton";
 import { Badge } from "~/components/ui/badge";
+import { Skeleton } from "~/components/ui/skeleton";
+import Avatar, { PlaceHolderAvatar } from "~/components/user/avatar";
+
 interface GameList {
   games: Game[];
 }

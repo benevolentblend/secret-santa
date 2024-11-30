@@ -1,11 +1,11 @@
 "use client";
 
 import type { UserRole } from "@prisma/client";
-
-import { api } from "~/trpc/react";
-import { DataTable } from "~/components/ui/data-table";
 import type { ColumnDef } from "@tanstack/react-table";
+import { api } from "~/trpc/react";
+
 import { type GameMatchWithUsers } from "~/components/game/use-batch-update-recipients";
+import { DataTable } from "~/components/ui/data-table";
 
 interface UserTableProps {
   role: UserRole;

@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
+
+import { type UserRole } from "@prisma/client";
 import {
-  type ColumnDef,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  type SortingState,
   useReactTable,
+  type ColumnDef,
+  type SortingState,
 } from "@tanstack/react-table";
 
 import {
@@ -17,10 +20,9 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+
 import { DataTableAction, type TableAction } from "./data-table-action";
-import { type UserRole } from "@prisma/client";
 import { Skeleton } from "./skeleton";
-import { useState } from "react";
 
 interface DataTableProps<TData extends { id: string | number }, TValue> {
   columns: ColumnDef<TData, TValue>[];

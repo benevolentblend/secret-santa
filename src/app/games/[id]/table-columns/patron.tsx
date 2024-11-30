@@ -1,7 +1,9 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
+
+import type { ColumnDef } from "@tanstack/react-table";
+
 import { type GameMatchWithUsers } from "~/components/game/use-batch-update-recipients";
 import Avatar from "~/components/user/avatar";
 

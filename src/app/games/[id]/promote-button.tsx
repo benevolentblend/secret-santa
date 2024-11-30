@@ -1,9 +1,12 @@
 "use client";
 
 import { type Game } from "@prisma/client";
-import { Button } from "~/components/ui/button";
-import { getPromoteGameStatus } from "~/lib/utils";
 import { api } from "~/trpc/react";
+
+import { Button } from "~/components/ui/button";
+
+import { getPromoteGameStatus } from "~/lib/utils";
+
 interface PromoteButtonProps {
   game: Game;
   promoteAction: (gameId: string) => void;
