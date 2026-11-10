@@ -191,7 +191,7 @@ export const gameRouter = createTRPCRouter({
         });
       }
 
-      if (game.status == "Sorting") {
+      if (game.status == "Matching") {
         const unmatchedPatronCount = await ctx.db.gameMatch.count({
           where: {
             gameId: input.id,
@@ -391,7 +391,7 @@ export const gameRouter = createTRPCRouter({
         });
       }
 
-      if (game.status !== "Sorting") {
+      if (game.status !== "Matching") {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message:
@@ -477,7 +477,7 @@ export const gameRouter = createTRPCRouter({
         });
       }
 
-      if (game.status !== "Sorting") {
+      if (game.status !== "Matching") {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Unable to sort a setup, active, or completed game.",

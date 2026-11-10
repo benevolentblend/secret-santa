@@ -11,10 +11,10 @@ type DemoteStatus = Exclude<GameStatus, "Setup">;
 
 export const getPromoteGameStatus = (state: PromoteStatus): GameStatus => {
   if (state === "Setup") {
-    return "Sorting";
+    return "Matching";
   }
 
-  if (state === "Sorting") {
+  if (state === "Matching") {
     return "Active";
   }
 
@@ -27,7 +27,7 @@ export const getDemoteGameStatus = (state: DemoteStatus): GameStatus => {
   }
 
   if (state === "Active") {
-    return "Sorting";
+    return "Matching";
   }
 
   return "Setup";

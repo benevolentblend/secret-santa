@@ -31,7 +31,7 @@ const PromoteButton: React.FC<PromoteButtonProps> = ({
     <Button
       variant="outline"
       onClick={() => promoteAction(game.id)}
-      disabled={game.status === "Sorting" && unmatchedPatronsCount > 0}
+      disabled={game.status === "Matching" && unmatchedPatronsCount > 0}
     >
       Promote to {nextGameStatus}
     </Button>
