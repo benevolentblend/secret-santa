@@ -80,7 +80,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         )}
       </div>
 
-      {game.status === "Sorting" && canManageGame && (
+      {game.status === "Matching" && canManageGame && (
         <Card>
           <CardHeader>
             <CardTitle>Match</CardTitle>

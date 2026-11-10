@@ -118,31 +118,31 @@ const NavBar: React.FC<NavBarProps> = ({ session }) => {
           )
           .map(({ href, content }) => (
             <NavigationMenuItem key={href}>
-              <Link href={href} legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    isDesktop ? "" : "w-max",
-                  )}
-                  onClick={() => setMobileNavOpen(false)}
-                >
+              <NavigationMenuLink
+                asChild
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  isDesktop ? "" : "w-max",
+                )}
+              >
+                <Link href={href} onClick={() => setMobileNavOpen(false)}>
                   {content}
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
           ))}
 
         {!isDesktop && (
           <>
             <NavigationMenuItem>
-              <Link href="/profile" legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={cn(navigationMenuTriggerStyle(), "w-max")}
-                  onClick={() => setMobileNavOpen(false)}
-                >
+              <NavigationMenuLink
+                asChild
+                className={cn(navigationMenuTriggerStyle(), "w-max")}
+              >
+                <Link href="/profile" onClick={() => setMobileNavOpen(false)}>
                   Profile
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <Button variant="ghost" onClick={() => signOut()}>
