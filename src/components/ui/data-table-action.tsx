@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type JSX } from "react";
 
 import { type UserRole } from "@prisma/client";
 import { type Row } from "@tanstack/react-table";
